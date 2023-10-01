@@ -12,6 +12,7 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   -webkit-text-size-adjust: 100%;
+
 }
 
 a {
@@ -69,6 +70,6 @@ button:focus-visible {
 }
 
 .leaflet-container {
-  width: 50vw; 
-  height: 50vh;
+  width: calc(100vw - 4rem); 
+  height: calc(100vh - 4rem);
 }
