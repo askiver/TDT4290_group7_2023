@@ -13,7 +13,7 @@ import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
 import AdbIcon from "@mui/icons-material/Adb";
 import trdLogo from '../assets/trd.png';
-import { useNavigate } from "react-router-dom";
+//import { useNavigate } from "react-router-dom";
 
 const pages = ["Ny data", "Kart", "Avfallsrapporter"];
 const settings = ["Profile", "Logout"];
@@ -37,11 +37,11 @@ function Navbar() {
     setAnchorElUser(null);
   };
 
-  const navigate = useNavigate()
+  //const navigate = useNavigate()
 
   const redirectToPage = () => {
 
-    navigate('')
+    //navigate('')
   }
 
   return (
