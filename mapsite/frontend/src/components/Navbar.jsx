@@ -13,7 +13,7 @@ import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
 import AdbIcon from "@mui/icons-material/Adb";
 import trdLogo from '../assets/trd.png';
-//import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const pages = ["Ny data", "Kart", "Avfallsrapporter"];
 const settings = ["Profile", "Logout"];
@@ -37,11 +37,26 @@ function Navbar() {
     setAnchorElUser(null);
   };
 
-  //const navigate = useNavigate()
+  const navigate = useNavigate()
 
-  const redirectToPage = () => {
-
-    //navigate('')
+  const redirectToPage = (page) => {
+    switch(page){
+      case 'Profile':
+        navigate('/user')
+        break
+      case 'Logout':
+        navigate('/')
+        break
+      case 'Ny data':
+        navigate('/admin')
+        break
+      case 'Kart':
+        navigate('/map')
+        break
+      case 'Avfallsrapporter':
+        navigate('/report')
+        break
+    }
   }
 
   return (
@@ -108,7 +123,7 @@ function Navbar() {
             {pages.map((page) => (
               <Button
                 key={page}
-                onClick={handleCloseNavMenu}
+                onClick={() => redirectToPage(page)}
                 sx={{ my: 2, color: "black", display: "block" }}
               >
                 {page}
@@ -139,8 +154,8 @@ function Navbar() {
               onClose={handleCloseUserMenu}
             >
               {settings.map((setting) => (
-                <MenuItem key={setting} onClick={handleCloseUserMenu}>
-                  <Typography textAlign="center" onClick={redirectToPage(setting)}>{setting}</Typography>
+                <MenuItem key={setting} onClick={() => redirectToPage(setting)}>
+                  <Typography textAlign="center" >{setting}</Typography>
                 </MenuItem>
               ))}
             </Menu>
