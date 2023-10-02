@@ -7,7 +7,7 @@ import { useNavigate } from "react-router-dom";
 function RegisterPage() {
   const [formData, setFormData] = useState({
     username: "",
-    password: "",
+    password1: "",
     password2: "",
     email: "",
     error: "",
@@ -28,7 +28,7 @@ function RegisterPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const { username, password, password2, email } = formData;
+    const { username, password1, password2, email } = formData;
 
     try {
       // Create an Axios instance with CORS support
@@ -38,7 +38,7 @@ function RegisterPage() {
       });
 
       // TODO: REGISTRATION LOGIC
-      const response = await axiosInstance.post("", { username, password, password2, email });
+      const response = await axiosInstance.post("", { username, password1, password2, email });
 
       // Handle successful registration
       console.log("Registration successful:", response);
@@ -56,7 +56,7 @@ function RegisterPage() {
     }
   };
 
-  const { username, password, password2, error, email} = formData;
+  const { username, password1, password2, error, email} = formData;
 
   return (
     <div>
@@ -96,8 +96,8 @@ function RegisterPage() {
               id="password-input"
               label="Passord"
               type="password"
-              name="password"
-              value={password}
+              name="password1"
+              value={password1}
               onChange={handleChange}
               autoComplete="current-password"
             />
