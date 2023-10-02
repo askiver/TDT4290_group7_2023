@@ -17,10 +17,9 @@
 1. Run the backend server from the TDT4290_group7_2023/mapsite directory
     * `cd mapsite`
     * `python manage.py runserver`
+    * The server should now be running on localhost:8000
 
-The server should now be running on localhost:8000
 2. Run the frontend
     * `cd frontend`
     * `npm run dev`
-
-The frontend should now be running on localhost:5173
+    * The frontend should now be running on localhost:5173
