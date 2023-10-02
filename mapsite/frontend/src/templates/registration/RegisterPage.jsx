@@ -4,10 +4,11 @@ import TextField from "@mui/material/TextField";
 import Box from "@mui/material/Box";
 import { useNavigate } from "react-router-dom";
 
-function LoginPage() {
+function RegisterPage() {
   const [formData, setFormData] = useState({
     username: "",
     password: "",
+    email: "",
     error: "",
   });
 
@@ -20,10 +21,6 @@ function LoginPage() {
     });
   };
 
-  const navigateToRegistration = () => {
-    navigate('/register')
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     const { username, password } = formData;
@@ -31,24 +28,25 @@ function LoginPage() {
     try {
       // Create an Axios instance with CORS support
       const axiosInstance = axios.create({
-        baseURL: "http://127.0.0.1:8000/api/login/", // Replace with your Django API URL
+        baseURL: "http://127.0.0.1:8000/api/register/",
         withCredentials: true, // Send credentials (cookies) if needed
       });
 
+      // TODO: REGISTRATION LOGIC
       const response = await axiosInstance.post("", { username, password });
 
-      // Handle successful login
-      console.log("Login successful:", response);
+      // Handle successful registration
+      console.log("Registration successful:", response);
 
       // Navigate to the "/map" route
       navigate("/map");
     } catch (error) {
       // Handle login error
-      console.error("Login failed:", error);
+      console.error("Registration failed:", error);
 
       setFormData({
         ...formData,
-        error: "Login failed. Please check your credentials.",
+        error: "Registration failed. Please check your credentials.",
       });
     }
   };
@@ -66,7 +64,7 @@ function LoginPage() {
           "& .MuiTextField-root": { m: 1, width: "25ch" },
         }}
       >
-        <h2>For å bruke denne siden må du logge inn.</h2>
+        <h2>Registrer ny bruker</h2>
         <form onSubmit={handleSubmit}>
           <div>
             <TextField
@@ -75,6 +73,16 @@ function LoginPage() {
               type="username"
               name="username"
               value={username}
+              onChange={handleChange}
+            />
+          </div>
+          <div>
+            <TextField
+              id="email-input"
+              label="Email-addresse"
+              type="email"
+              name="email"
+              value={email}
               onChange={handleChange}
             />
           </div>
@@ -103,4 +111,4 @@ function LoginPage() {
   );
 }
 
-export default LoginPage;
+export default RegisterPage;
