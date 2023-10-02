@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import axios from "axios";
 import TextField from "@mui/material/TextField";
 import Box from "@mui/material/Box";
@@ -8,11 +8,16 @@ function RegisterPage() {
   const [formData, setFormData] = useState({
     username: "",
     password: "",
+    password2: "",
     email: "",
     error: "",
   });
 
   const navigate = useNavigate();
+
+  const navigateToLogin = () => {
+    navigate('/login')
+  }
 
   const handleChange = (e) => {
     setFormData({
@@ -23,7 +28,7 @@ function RegisterPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const { username, password } = formData;
+    const { username, password, password2, email } = formData;
 
     try {
       // Create an Axios instance with CORS support
@@ -33,7 +38,7 @@ function RegisterPage() {
       });
 
       // TODO: REGISTRATION LOGIC
-      const response = await axiosInstance.post("", { username, password });
+      const response = await axiosInstance.post("", { username, password, password2, email });
 
       // Handle successful registration
       console.log("Registration successful:", response);
@@ -51,7 +56,7 @@ function RegisterPage() {
     }
   };
 
-  const { username, password, error } = formData;
+  const { username, password, password2, error, email} = formData;
 
   return (
     <div>
@@ -97,14 +102,25 @@ function RegisterPage() {
               autoComplete="current-password"
             />
           </div>
+          <div>
+            <TextField
+              id="password-input2"
+              label="Gjengi passord"
+              type="password"
+              name="password2"
+              value={password2}
+              onChange={handleChange}
+              autoComplete="current-password"
+            />
+          </div>
           <button type="submit" className="button">
-            Logg inn
+            Opprett bruker
           </button>
           {error && <p>{error}</p>}
         </form>
-        <h4>Har du ikke bruker? Registrer deg her:</h4>
-        <button type="register" className="button" onClick={navigateToRegistration}>
-          Registrer bruker
+        <h4>Har du allerede bruker? Logg inn her:</h4>
+        <button type="register" className="button" onClick={navigateToLogin}>
+          Logg inn
         </button>
       </Box>
     </div>

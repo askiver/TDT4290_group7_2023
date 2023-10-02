@@ -13,6 +13,7 @@ import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
 import AdbIcon from "@mui/icons-material/Adb";
 import trdLogo from '../assets/trd.png';
+import { useNavigate } from "react-router-dom";
 
 const pages = ["Ny data", "Kart", "Avfallsrapporter"];
 const settings = ["Profile", "Logout"];
@@ -35,6 +36,13 @@ function Navbar() {
   const handleCloseUserMenu = () => {
     setAnchorElUser(null);
   };
+
+  const navigate = useNavigate()
+
+  const redirectToPage = () => {
+
+    navigate('')
+  }
 
   return (
     <AppBar style={{ backgroundColor: "#FFFFFF" }}>
@@ -132,7 +140,7 @@ function Navbar() {
             >
               {settings.map((setting) => (
                 <MenuItem key={setting} onClick={handleCloseUserMenu}>
-                  <Typography textAlign="center">{setting}</Typography>
+                  <Typography textAlign="center" onClick={redirectToPage(setting)}>{setting}</Typography>
                 </MenuItem>
               ))}
             </Menu>
