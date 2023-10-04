@@ -37,24 +37,7 @@ export default function Map() {
 
 
     useEffect(() => {
-        // const fetchData = async () => {
-        //     const rawData = await fetch("src/assets/polygonData.json");
-        //     const json = await rawData.json();
-
-            
-        //     // json.map((building) => {
-        //     //     building.geometry = JSON.parse(building.geometry)
-        //     //     building.geometry.map((coords) => {
-        //     //         const x = coords[1];
-        //     //         coords[1] = coords[0];
-        //     //         coords[0] = x;
-        //     //     })
-        //     // })
-        //     setData(json)
-        // }
-
-        // fetchData();
-
+        //Redo fetch the right way
         fetch("src/assets/polygonData.json")
             .then((res) => res.json())
             .then((data) => setData(data))
@@ -71,7 +54,7 @@ export default function Map() {
         {loading
         ? <h1>Loading...</h1>
         :
-          <MapContainer center={[63.4195979, 10.4835996]} zoom={13} scrollWheelZoom={true}>
+          <MapContainer center={[63.430482, 10.394962]} zoom={13} scrollWheelZoom={true}>
             <TileLayer
                 attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                 url="https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png"
