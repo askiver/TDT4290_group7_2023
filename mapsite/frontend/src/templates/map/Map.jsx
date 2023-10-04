@@ -1,4 +1,4 @@
-import { MapContainer, TileLayer, Polygon } from 'react-leaflet';
+import { MapContainer, TileLayer, Polygon, Marker, Popup, useMapEvents } from 'react-leaflet';
 import { useEffect, useState } from 'react';
 
 
@@ -81,5 +81,25 @@ export default function Map() {
             ))}
             </MapContainer>}
         </>
+    )
+}
+
+function LocationMarker() {
+    const [position, setPosition] = useState(null)
+    const map = useMapEvents({
+        click(e) {
+            // Get the clicked position from the event object
+            const clickedPosition = e.latlng;
+            // Set the position state with the clicked coordinates
+            setPosition(clickedPosition);
+            // Move the map and zoom
+            map.flyTo(clickedPosition, 17)
+        },
+    })
+  
+    return position === null ? null : (
+      <Marker position={position}>
+        <Popup>You are here</Popup>
+      </Marker>
     )
 }
