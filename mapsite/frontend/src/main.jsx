@@ -4,7 +4,7 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom"
 
 
 import App from './App.jsx'
-import Map from './routes/Map.jsx'
+import Map from './templates/map/Map.jsx'
 import './index.css'
 
 const router = createBrowserRouter([
