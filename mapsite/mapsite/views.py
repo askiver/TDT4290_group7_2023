@@ -3,7 +3,7 @@ import json
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.contrib.auth.forms import UserCreationForm
 from django.shortcuts import redirect
 from django.urls import reverse_lazy
@@ -64,6 +64,14 @@ def sign_in(request):
         else:
             # form is not valid or user is not authenticated
             return Response(status=status.HTTP_401_UNAUTHORIZED)
+
+
+@api_view(['GET'])
+def send_json(request):
+    if request.method == "GET":
+        f = open('geoJSON/finalJson.json')
+        data = json.load(f)
+        return JsonResponse(data, status=status.HTTP_200_OK)
 
 
 class SignUpView(generic.CreateView):

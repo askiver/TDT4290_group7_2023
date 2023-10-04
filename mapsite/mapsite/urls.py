@@ -28,5 +28,6 @@ urlpatterns = [
     path('api/login/', views.sign_in, name='login'),
     path('api/logout/', views.sign_out, name='logout'),
     path('api/register/', views.register_user, name='register'),
+    path('api/get_locations', views.send_json, name='send_json'),
     path('signup/', SignUpView.as_view(), name='signup'),
 ]
