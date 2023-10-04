@@ -21,5 +21,6 @@
 
 2. Run the frontend
     * `cd frontend`
+    * `npm install`
     * `npm run dev`
     * The frontend should now be running on localhost:5173
