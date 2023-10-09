@@ -78,8 +78,13 @@ WSGI_APPLICATION = 'mapsite.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'askis_TDT4290_databse',
+        'USER': 'askis_TDT4290',
+        'PASSWORD': '4290',
+        'HOST': 'mysql.stud.ntnu.no',
+        'PORT': '3306',
+
     }
 }
 
