@@ -1,3 +1,5 @@
+
+import pymysql
 """
 Django settings for mapsite project.
 
@@ -79,7 +81,8 @@ WSGI_APPLICATION = 'mapsite.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'askis_TDT4290_databse',
+        'DRIVER': 'pymysql',
+        'NAME': 'askis_TDT4290_database',
         'USER': 'askis_TDT4290',
         'PASSWORD': '4290',
         'HOST': 'mysql.stud.ntnu.no',
@@ -87,6 +90,11 @@ DATABASES = {
 
     }
 }
+
+# Fake PyMySQL's version and install as MySQLdb
+# https://adamj.eu/tech/2020/02/04/how-to-use-pymysql-with-django/
+pymysql.version_info = (1, 4, 6, "final", 0)
+pymysql.install_as_MySQLdb()
 
 
 # Password validation
