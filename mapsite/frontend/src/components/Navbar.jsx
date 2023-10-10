@@ -12,8 +12,9 @@ import Button from "@mui/material/Button";
 import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
 import AdbIcon from "@mui/icons-material/Adb";
-import trdLogo from '../assets/trd.png';
+import trdLogo from "../assets/trd.png";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const pages = ["Ny data", "Kart", "Avfallsrapporter"];
 const settings = ["Profile", "Logout"];
@@ -37,27 +38,33 @@ function Navbar() {
     setAnchorElUser(null);
   };
 
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
-  const redirectToPage = (page) => {
-    switch(page){
-      case 'Profile':
-        navigate('/user')
-        break
-      case 'Logout':
-        navigate('/')
-        break
-      case 'Ny data':
-        navigate('/admin')
-        break
-      case 'Kart':
-        navigate('/map')
-        break
-      case 'Avfallsrapporter':
-        navigate('/report')
-        break
+  const redirectToPage = async (page) => {
+    switch (page) {
+      case "Profile":
+        navigate("/user");
+        break;
+      case "Logout":
+        console.log("Logging out");
+        const axiosInstance = axios.create({
+          baseURL: "http://127.0.0.1:8000/api/logout/",
+          withCredentials: true, // Send credentials (cookies) if needed
+        });
+        await axiosInstance.get("");
+        navigate("/");
+        break;
+      case "Ny data":
+        navigate("/admin");
+        break;
+      case "Kart":
+        navigate("/map");
+        break;
+      case "Avfallsrapporter":
+        navigate("/report");
+        break;
     }
-  }
+  };
 
   return (
     <AppBar style={{ backgroundColor: "#FFFFFF" }}>
@@ -134,7 +141,7 @@ function Navbar() {
           <Box sx={{ flexGrow: 0 }}>
             <Tooltip title="Open settings">
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                <Avatar/>
+                <Avatar />
               </IconButton>
             </Tooltip>
             <Menu
@@ -155,7 +162,7 @@ function Navbar() {
             >
               {settings.map((setting) => (
                 <MenuItem key={setting} onClick={() => redirectToPage(setting)}>
-                  <Typography textAlign="center" >{setting}</Typography>
+                  <Typography textAlign="center">{setting}</Typography>
                 </MenuItem>
               ))}
             </Menu>
