@@ -1,5 +1,6 @@
 import { MapContainer, TileLayer, Polygon, Marker, Popup, useMapEvents } from 'react-leaflet';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
+import * as GeoSearch from 'leaflet-geosearch'
 
 
 export default function Map() {
