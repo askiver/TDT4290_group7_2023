@@ -1,5 +1,6 @@
 import { MapContainer, TileLayer, Polygon, Marker, Popup, useMapEvents } from 'react-leaflet';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
+import * as GeoSearch from 'leaflet-geosearch'
 
 
 export default function Map() {
@@ -20,6 +21,7 @@ export default function Map() {
         wood: "22",
     }]);
     const [loading, setLoading] = useState(true);
+    const mapRef = useRef(null);
 
     const colorPicker = (value) => {
         if(value < 20) {
@@ -37,12 +39,23 @@ export default function Map() {
 
 
     useEffect(() => {
+        const map = mapRef.current;
         //Redo fetch the right way
         fetch("src/assets/polygonData.json")
             .then((res) => res.json())
             .then((data) => setData(data))
             .finally(setLoading(false))
         // setLoading(false)
+
+        if (map) {
+            // Create and add the GeoSearch control
+            const searchControl = new GeoSearch.GeoSearchControl({
+              provider: new GeoSearch.OpenStreetMapProvider(),
+              style: 'bar', // Customize the style here (bar or button)
+              searchLabel: 'Skriv inn adresse',
+            });
+            map.addControl(searchControl);
+          }
 
     }, [])
 
@@ -54,7 +67,7 @@ export default function Map() {
         {loading
         ? <h1>Loading...</h1>
         :
-          <MapContainer center={[63.430482, 10.394962]} zoom={13} scrollWheelZoom={true}>
+          <MapContainer ref={mapRef} center={[63.430482, 10.394962]} zoom={13} scrollWheelZoom={true}>
             <TileLayer
                 attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                 url="https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png"
