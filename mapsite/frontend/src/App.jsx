@@ -6,31 +6,29 @@ import UserPage from "./templates/UserPage";
 import Navbar from "./components/Navbar";
 import AdminPage from "./templates/admin/AdminPage";
 import ReportPage from "./templates/ReportPage";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import axios from "axios";
 
 export default function App() {
-
+  /*
   const isAuthenticated = async () => {
-    
     try {
       // Check if the user is authenticated
-      console.log("Starting function")
+      console.log("Starting function");
       const axiosInstance = axios.create({
         baseURL: "http://127.0.0.1:8000/api/check_login/",
         withCredentials: true, // Send credentials (cookies) if needed
       });
-      
-      console.log("Came this far")
-      const response = await axiosInstance.get("");
-      return response
 
+      console.log("Came this far");
+      await axiosInstance.get("");
+      return true;
     } catch (error) {
-      console.log("Checking authentication failed.")
-      console.log(error)
-      return false
+      console.log("Checking authentication failed.");
+      console.log(error);
+      return false;
     }
-  };
+  };*/
 
   return (
     <BrowserRouter>
@@ -42,14 +40,16 @@ export default function App() {
         <Route path="/user" element={<UserPage />} />
         <Route path="/admin" element={<AdminPage />} />
         <Route path="/report" element={<ReportPage />} />
-        <Route
-          path="/map"
-          element={isAuthenticated() ? <MapPage /> : <Navigate to="/login" />}
-        />
+        <Route path="/map" element={<MapPage />} />
 
+        {/*
+          // How to route with authentication
+          <Route
+            path="/map"
+            element={isAuthenticated() ? <MapPage /> : <Navigate to="/login" />}
+          />
+  */}
       </Routes>
     </BrowserRouter>
   );
-
-
 }
