@@ -17,26 +17,54 @@ def index(request):
     print("testing")
     return HttpResponse("Current logged in user is " + request.user.username + ".")
 
+@api_view(['GET'])
+def check_login(request):
+    if request.method == "GET":
+        if request.user.is_authenticated:
+            return Response(status=status.HTTP_200_OK)
+        else:
+            return Response(status=status.HTTP_401_UNAUTHORIZED)
+
 
 @api_view(['POST'])
 def register_user(request):
     if request.method == "POST":
+        #print(request.body)
         # Decode JSON data from the request body
         request_data = json.loads(request.body.decode('utf-8'))
 
         username = request_data.get("username")
-        password = request_data.get("password")
+        password1 = request_data.get("password1")
+        password2 = request_data.get("password2")
         email = request_data.get("email")
+        #form = UserCreationForm(request.POST)
 
-        if username and password and email:
-            # Create user
-            user = User.objects.create_user(username, email, password)
-            user.save()
-            return Response(status=status.HTTP_201_CREATED)
+        """
+        # Get all usernames
+        usernames = User.objects.values_list('username', flat=True)
+        # Get all emails
+        emails = User.objects.values_list('email', flat=True)
+        print(usernames)
+        print(emails)
+        if form.is_valid():
+            print('utrolig')
+            form.save()
+            return Response('Registration successful', status=status.HTTP_201_CREATED)
 
-        else:
-            # form is not valid or user is not authenticated
-            return Response(status=status.HTTP_400_BAD_REQUEST)
+        """
+        if password1 != password2:
+            print('Passwords do not match')
+            return Response('Passwords do not match', status=status.HTTP_400_BAD_REQUEST)
+        if User.objects.filter(username=username).exists():
+            print('Username already exists')
+            return Response('Username already exists', status=status.HTTP_400_BAD_REQUEST)
+        if User.objects.filter(email=email).exists():
+            print('Email already exists')
+            return Response('Email already exists', status=status.HTTP_400_BAD_REQUEST)
+        user = User.objects.create_user(username=username, email=email, password=password1)
+        user.save()
+        return Response('Registration successful', status=status.HTTP_201_CREATED)
+
 
 
 @api_view(['GET'])
@@ -65,16 +93,10 @@ def sign_in(request):
             # form is not valid or user is not authenticated
             return Response(status=status.HTTP_401_UNAUTHORIZED)
 
-
+          
 @api_view(['GET'])
 def send_json(request):
     if request.method == "GET":
         f = open('geoJSON/finalJson.json')
         data = json.load(f)
         return JsonResponse(data, status=status.HTTP_200_OK)
-
-
-class SignUpView(generic.CreateView):
-    form_class = UserCreationForm
-    success_url = reverse_lazy("login")
-    template_name = "registration/signup.html"

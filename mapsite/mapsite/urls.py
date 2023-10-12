@@ -18,16 +18,14 @@ from django.contrib import admin
 from django.urls import path
 from django.contrib.auth import views as auth_views
 from . import views
-from .views import SignUpView
 from django.views.generic.base import TemplateView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('index/', views.index, name='index'),
-    #path('login/', auth_views.LoginView.as_view(), name='login'),
     path('api/login/', views.sign_in, name='login'),
     path('api/logout/', views.sign_out, name='logout'),
     path('api/register/', views.register_user, name='register'),
+    path('api/check_login/', views.check_login, name='check_login'),
     path('api/get_locations', views.send_json, name='send_json'),
-    path('signup/', SignUpView.as_view(), name='signup'),
 ]

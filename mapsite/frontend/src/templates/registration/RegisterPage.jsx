@@ -4,14 +4,20 @@ import TextField from "@mui/material/TextField";
 import Box from "@mui/material/Box";
 import { useNavigate } from "react-router-dom";
 
-function LoginPage() {
+function RegisterPage() {
   const [formData, setFormData] = useState({
     username: "",
-    password: "",
+    password1: "",
+    password2: "",
+    email: "",
     error: "",
   });
 
   const navigate = useNavigate();
+
+  const navigateToLogin = () => {
+    navigate('/login')
+  }
 
   const handleChange = (e) => {
     setFormData({
@@ -20,40 +26,37 @@ function LoginPage() {
     });
   };
 
-  const navigateToRegistration = () => {
-    navigate('/register')
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const { username, password } = formData;
+    const { username, password1, password2, email } = formData;
 
     try {
       // Create an Axios instance with CORS support
       const axiosInstance = axios.create({
-        baseURL: "http://127.0.0.1:8000/api/login/", // Replace with your Django API URL
+        baseURL: "http://127.0.0.1:8000/api/register/",
         withCredentials: true, // Send credentials (cookies) if needed
       });
 
-      const response = await axiosInstance.post("", { username, password });
+      // TODO: REGISTRATION LOGIC
+      const response = await axiosInstance.post("", { username, password1, password2, email });
 
-      // Handle successful login
-      console.log("Login successful:", response);
+      // Handle successful registration
+      console.log("Registration successful:", response);
 
       // Navigate to the "/map" route
       navigate("/map");
     } catch (error) {
       // Handle login error
-      console.error("Login failed:", error);
+      console.error("Registration failed:", error);
 
       setFormData({
         ...formData,
-        error: "Login failed. Please check your credentials.",
+        error: "Registration failed. Please check your credentials.",
       });
     }
   };
 
-  const { username, password, error } = formData;
+  const { username, password1, password2, error, email} = formData;
 
   return (
     <div>
@@ -66,7 +69,7 @@ function LoginPage() {
           "& .MuiTextField-root": { m: 1, width: "25ch" },
         }}
       >
-        <h2>For å bruke denne siden må du logge inn.</h2>
+        <h2>Registrer ny bruker</h2>
         <form onSubmit={handleSubmit}>
           <div>
             <TextField
@@ -80,27 +83,48 @@ function LoginPage() {
           </div>
           <div>
             <TextField
+              id="email-input"
+              label="Email-addresse"
+              type="email"
+              name="email"
+              value={email}
+              onChange={handleChange}
+            />
+          </div>
+          <div>
+            <TextField
               id="password-input"
               label="Passord"
               type="password"
-              name="password"
-              value={password}
+              name="password1"
+              value={password1}
+              onChange={handleChange}
+              autoComplete="current-password"
+            />
+          </div>
+          <div>
+            <TextField
+              id="password-input2"
+              label="Gjengi passord"
+              type="password"
+              name="password2"
+              value={password2}
               onChange={handleChange}
               autoComplete="current-password"
             />
           </div>
           <button type="submit" className="button">
-            Logg inn
+            Opprett bruker
           </button>
           {error && <p>{error}</p>}
         </form>
-        <h4>Har du ikke bruker? Registrer deg her:</h4>
-        <button type="register" className="button" onClick={navigateToRegistration}>
-          Registrer bruker
+        <h4>Har du allerede bruker? Logg inn her:</h4>
+        <button type="register" className="button" onClick={navigateToLogin}>
+          Logg inn
         </button>
       </Box>
     </div>
   );
 }
 
-export default LoginPage;
+export default RegisterPage;
