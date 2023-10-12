@@ -27,4 +27,5 @@ urlpatterns = [
     path('api/logout/', views.sign_out, name='logout'),
     path('api/register/', views.register_user, name='register'),
     path('api/check_login/', views.check_login, name='check_login'),
+    path('api/get_locations', views.send_json, name='send_json'),
 ]
