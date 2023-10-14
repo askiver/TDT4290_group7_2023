@@ -1,7 +1,11 @@
 // This is a placeholder page, used for setting up router
 
-function ReportPage() {
-  return <h5>This is the report page</h5>;
-}
+import WasteReport from "../components/WasteReport";
 
-export default ReportPage;
+export default function ReportPage() {
+  return(
+    <div>
+      <WasteReport/>
+    </div>
+    )
+}

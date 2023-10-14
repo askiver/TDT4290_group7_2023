@@ -1,6 +1,5 @@
 import "./App.css";
 import LoginPage from "./templates/registration/LoginPage";
-import MapPage from "./templates/MapPage";
 import RegisterPage from "./templates/registration/RegisterPage";
 import UserPage from "./templates/UserPage";
 import Navbar from "./components/Navbar";
@@ -8,6 +7,7 @@ import AdminPage from "./templates/admin/AdminPage";
 import ReportPage from "./templates/ReportPage";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import axios from "axios";
+import Map from "./templates/map/Map";
 
 export default function App() {
   /*
@@ -40,7 +40,7 @@ export default function App() {
         <Route path="/user" element={<UserPage />} />
         <Route path="/admin" element={<AdminPage />} />
         <Route path="/report" element={<ReportPage />} />
-        <Route path="/map" element={<MapPage />} />
+        <Route path="/map" element={<Map />} />
 
         {/*
           // How to route with authentication
