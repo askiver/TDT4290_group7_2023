@@ -2,8 +2,7 @@ import { MapContainer, TileLayer, Polygon, Marker, Popup, useMapEvents } from 'r
 import { useEffect, useState, useRef } from 'react';
 import * as GeoSearch from 'leaflet-geosearch'
 
-
-export default function Map() {
+export default function Map(props) {
     const [data, setData] = useState([{
         osmid: "0",
         buildingnr: "0",
@@ -72,9 +71,9 @@ export default function Map() {
                 attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                 url="https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png"
             />
-            {data.map((building) => (
+            {/* {data.map((building) => (
                 <Polygon key={building.osmid} pathOptions={colorPicker(building.steel)} positions={building.geometry}/>
-            ))}
+            ))} */}
             </MapContainer>}
         </>
     )
