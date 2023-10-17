@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -17,6 +17,10 @@ const cellStyle = {
   border: '1px solid #ddd',
 };
 
+const boldText = {
+  fontWeight: 'bold'
+}
+
 const headerCellStyle = {
   backgroundColor: '#f0f0f0',
   fontWeight: 'bold',
@@ -28,15 +32,20 @@ const subHeaderCellStyle = {
   backgroundColor: '#f5f5f5',
 }
 
-const rows = [
-  'Trevirke (ikke kreosot- og CCA-impregnert)', 'Papir, papp og kartong', 'Glass', 'Jern og andre metaller', 'Gipsbaserte materialer', 'Plast', 'Betong, tegl, lett klinker og lignende', 'Forurenset betong og tegn (under grensen for farlig avfall)', 'EE-avfall (elektriske og elektroniske produkter)', 'Annet (fyll inn under'
+const centerCellStyle = {
+  backgroundColor: '#f5f5f5',
+  textAlign: 'center',
+  border: '1px solid #ddd',
+}
+
+// Rows that represent the rows of the ordinary waste from the waste report
+const ordinaryRows = [
+  'Trevirke (ikke kreosot- og CCA-impregnert)', 'Papir, papp og kartong', 'Glass', 'Jern og andre metaller', 'Gipsbaserte materialer', 'Plast', 'Betong, tegl, lett klinker og lignende', 'Forurenset betong og tegn (under grensen for farlig avfall)', 'EE-avfall (elektriske og elektroniske produkter)', 'Annet (fyll inn under)'
 ]
 
-const data = [
-  ['Paper', '100', '10', '20', '30', '40', '50'],
-  ['Glass', '50', '5', '15', '10', '20', '25'],
-  ['Iron', '75', '8', '20', '10', '37', '42'],
-  // Add more rows as needed
+// Rows that represent the rows of the dangerous waste from the waste report
+const dangerousRows = [
+  '7051-55 Maling, lim, lakk, fugemasser, spraybokser, m.m (også "tomme" fugemasse-patroner)'
 ]
 
 const WasteReport = () => {
@@ -71,23 +80,39 @@ const WasteReport = () => {
         </TableHead>
         <TableHead>
           <TableRow>
-            <TableCell style={headerCellStyle}></TableCell>
-            <TableCell style={headerCellStyle}>Fraksjoner som skal kildesorteres</TableCell>
-            <TableCell style={headerCellStyle}>Mengde levert til godkjent avfallsanlegg</TableCell>
-            <TableCell style={headerCellStyle}>Leveringssted</TableCell>
-            <TableCell style={headerCellStyle}>Mengde levert direkte til ombruk/gjenvinning</TableCell>
-            <TableCell style={headerCellStyle}>Leveringssted</TableCell>
-            <TableCell style={headerCellStyle}>Fraksjoner som er kildesortert</TableCell>
+            <TableCell style={centerCellStyle}></TableCell>
+            <TableCell style={centerCellStyle}>Fraksjoner som skal kildesorteres</TableCell>
+            <TableCell style={centerCellStyle}>Mengde levert til godkjent avfallsanlegg</TableCell>
+            <TableCell style={centerCellStyle}>Leveringssted</TableCell>
+            <TableCell style={centerCellStyle}>Mengde levert direkte til ombruk/gjenvinning</TableCell>
+            <TableCell style={centerCellStyle}>Leveringssted</TableCell>
+            <TableCell style={centerCellStyle}>Fraksjoner som er kildesortert</TableCell>
+          </TableRow>
+          <TableRow>
+            <TableCell style={subHeaderCellStyle}></TableCell>
+            {Array.from({ length: 6 }, (_, index) => (
+              <TableCell key={index} style={centerCellStyle}>
+                ({index + 1})
+              </TableCell>
+            ))}
+          </TableRow>
+          <TableRow>
+            <TableCell style={centerCellStyle}><span style={boldText}>Ordinært avfall</span><br />
+        (listen er ikke uttømmende)
+      </TableCell>
+            {Array.from({ length: 6 }, (_, index) => (
+              <TableCell key={index} style={centerCellStyle}/>
+            ))}
           </TableRow>
         </TableHead>
         <TableBody>
           {reportData.map((row, rowIndex) => (
             <TableRow key={rowIndex}>
               {row.map((cell, columnIndex) => (
-                <TableCell key={columnIndex} style={cellStyle}>
+                <TableCell key={columnIndex} style={columnIndex === 0 ? subHeaderCellStyle : cellStyle}>
                   {columnIndex === 0 ? (
-                    <div style={{ fontWeight: 'bold', backgroundColor: '#f5f5f5', textAlign: 'center' }}>
-                      {rows[rowIndex]}
+                    <div style={subHeaderCellStyle}>
+                      {ordinaryRows[rowIndex]}
                     </div>
                   ) : (
                     <TextField
@@ -104,6 +129,12 @@ const WasteReport = () => {
               ))}
             </TableRow>
           ))}
+          <TableRow>
+            <TableCell style={subHeaderCellStyle}>Sum ordinært avfall</TableCell>
+          </TableRow>
+          <TableRow style={cellStyle}>
+            <TableCell>Farlig avfall (listen er ikke utømmelig)</TableCell>
+          </TableRow>
         </TableBody>
       </Table>
     </TableContainer>
