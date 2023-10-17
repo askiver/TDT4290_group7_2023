@@ -33,23 +33,25 @@ export default function App() {
   return (
     <BrowserRouter>
       <Navbar />
-      <Routes>
-        <Route path="/" element={<LoginPage />} />
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/register" element={<RegisterPage />} />
-        <Route path="/user" element={<UserPage />} />
-        <Route path="/admin" element={<AdminPage />} />
-        <Route path="/report" element={<ReportPage />} />
-        <Route path="/map" element={<Map />} />
+      <div style={{ paddingTop: "64px" }}>
+        <Routes>
+          <Route path="/" element={<LoginPage />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/register" element={<RegisterPage />} />
+          <Route path="/user" element={<UserPage />} />
+          <Route path="/admin" element={<AdminPage />} />
+          <Route path="/report" element={<ReportPage />} />
+          <Route path="/map" element={<Map />} />
 
-        {/*
-          // How to route with authentication
-          <Route
-            path="/map"
-            element={isAuthenticated() ? <MapPage /> : <Navigate to="/login" />}
-          />
-  */}
-      </Routes>
+          {/*
+            // How to route with authentication
+            <Route
+              path="/map"
+              element={isAuthenticated() ? <MapPage /> : <Navigate to="/login" />}
+            />
+    */}
+        </Routes>
+      </div>
     </BrowserRouter>
   );
 }
