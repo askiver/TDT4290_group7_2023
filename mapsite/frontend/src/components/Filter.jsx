@@ -1,12 +1,24 @@
-
 import FilterButton from "./FilterButton"
 import "../components/Filter.css"
 
-export default function Filter() {
+function handleButtonHide() {
+    let container = document.getElementById("filterContainer");
+    let button = document.getElementById("filterContainer_drawerButton");
 
+    console.log("Button pressed");
+    if(container) {
+        container.style.left = "-27.5%";
+    }
+    // if (button) {
+    //     button.style.position = "absolute";
+    //     button.style.left = "0";
+    // }
+}
+
+export default function Filter() {
     return (
         <>
-            <div className="filterContainer">
+            <div className="filterContainer" id="filterContainer">
                 <h1 className="filterTitle"> Filters </h1>   
                 <div className="filterContainer_buildingFilter">
                     <h3 className="filterContainer_filterTypeText"> Building Filter </h3>
@@ -60,6 +72,7 @@ export default function Filter() {
                         value={"3"}
                         displayName={"Betong"}/>
                 </div>
+                <button type="button" className="filterContainer_drawerButton" id="filterContainer_drawerButton" onClick={handleButtonHide()}>Apply</button>
 
             </div>
         </>

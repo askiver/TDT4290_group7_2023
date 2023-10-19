@@ -4,9 +4,14 @@
     flex-direction: column;
     background-color: white;
     overflow-x: hidden;
-    margin: 10px 10px 10px 0px;
-    padding: 2%;
+    margin: 0px 10px 0px 0px;
+    padding: 100px 10px 0px 10px;
     border-radius: 0% 2% 2% 0%;
+    position: absolute;
+    height: calc(100%-100px);
+    left: 0;
+    top: 0;
+    z-index: 1050;
 }
 
 .filterContainer_buildingFilter {
@@ -26,6 +31,7 @@
 .filterTitle {
     font-size: 2rem;
     font-weight: 200;
+    margin-bottom: 0;
 }
 
 .filterButton_container {
@@ -44,6 +50,10 @@
     padding: 0px 0px 0px 0.5vw;
 }
 
+.filterButton_container > input{
+    
+}
+
 .filterContainer_filterTypeText {
     margin-bottom: 0;
     font-weight: 250;
@@ -54,4 +64,9 @@
     margin-bottom: 1vh;
     width: 100%;
     border-top: 2px solid grey;
+}
+
+.filterContainer_drawerButton {
+    margin: 10% 0% 10% 0%;
+    border-radius: 100vh;
 }

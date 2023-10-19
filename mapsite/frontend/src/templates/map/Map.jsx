@@ -1,4 +1,4 @@
-import { MapContainer, TileLayer, Polygon, Marker, Popup, useMapEvents } from 'react-leaflet';
+import { MapContainer, TileLayer, Polygon, Marker, Popup, useMapEvents, LayerGroup, SVGOverlay } from 'react-leaflet';
 import { useEffect, useState, useRef } from 'react';
 import * as GeoSearch from 'leaflet-geosearch'
 
@@ -19,6 +19,8 @@ export default function Map(props) {
         steel: "40",
         wood: "22",
     }]);
+    const [geometry, setGeometry] = useState([[[]]]);
+    const [filter, setFilter] = useState({});
     const [loading, setLoading] = useState(true);
     const mapRef = useRef(null);
 
@@ -36,15 +38,8 @@ export default function Map(props) {
         }
     }
 
-
     useEffect(() => {
         const map = mapRef.current;
-        //Redo fetch the right way
-        fetch("src/assets/polygonData.json")
-            .then((res) => res.json())
-            .then((data) => setData(data))
-            .finally(setLoading(false))
-        // setLoading(false)
 
         if (map) {
             // Create and add the GeoSearch control
@@ -54,12 +49,23 @@ export default function Map(props) {
               searchLabel: 'Skriv inn adresse',
             });
             map.addControl(searchControl);
-          }
+        }
+        //Redo fetch the right way
+        fetch("src/assets/polygonData.json")
+            .then((res) => res.json())
+            .then((data) => setData(data))
+            .finally(setLoading(false))
+        // setLoading(false)
 
+        let polygons = []
+        
+        data.map(building => {
+            if(true) {
+                polygons.push(building.geometry);
+            }
+        })
+        setGeometry(polygons);
     }, [])
-
-    console.log("This is data")
-    console.log(data)
 
     return(
         <>
@@ -71,9 +77,18 @@ export default function Map(props) {
                 attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                 url="https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png"
             />
-            {/* {data.map((building) => (
-                <Polygon key={building.osmid} pathOptions={colorPicker(building.steel)} positions={building.geometry}/>
-            ))} */}
+            <LayerGroup>
+                {/* {data.map((building) => (
+                    <Polygon key={building.osmid} pathOptions={"#FFFF"} positions={building.geometry}/>
+                ))} */}
+                {/* {geometry.map(geo => {
+                    <Polygon key={1} pathOptions={"#FFFF"} positions={geo}/>
+                })} */}
+            </LayerGroup>
+            <Polygon key={1} pathOptions={"#FFFFF"} positions={geometry}/>
+            {/* <SVGOverlay>
+                <polygon points={geometry}></polygon>
+            </SVGOverlay> */}
             </MapContainer>}
         </>
     )
