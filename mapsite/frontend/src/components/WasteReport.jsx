@@ -182,8 +182,6 @@ const WasteReport = () => {
                 Faktisk mengde (tonn) (2) + (4)
               </TableCell>
             </TableRow>
-          </TableHead>
-          <TableHead>
             <TableRow>
               <TableCell style={centerCellStyle}></TableCell>
               <TableCell style={centerCellStyle}>
@@ -219,7 +217,7 @@ const WasteReport = () => {
                 <TableCell key={index} style={centerCellStyle} />
               ))}
             </TableRow>
-          </TableHead>
+            </TableHead>
           <TableBody>
             {reportData.map((row, rowIndex) => (
               <TableRow key={rowIndex}>
