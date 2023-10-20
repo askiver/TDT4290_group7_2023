@@ -116,7 +116,9 @@ const WasteReport = () => {
           </TableHead>
           <TableBody>
             {/*TODO: Handle changes to address. How and where do we store this information?*/}
-            <TableCell style={subHeaderCellStyle} rowSpan={2}>Eiendom/byggested</TableCell>
+            <TableCell style={subHeaderCellStyle} rowSpan={2}>
+              Eiendom/byggested
+            </TableCell>
             <TableCell style={{ display: "flex", alignItems: "center" }}>
               {reportInfo.map((name, index) => (
                 <TextField
@@ -127,6 +129,7 @@ const WasteReport = () => {
                   size="small"
                   variant="standard"
                   onChange={(event) =>
+                    // TODO: Create separate helper function or adapt function, bc there is no row here
                     handleCellChange(event, rowIndex, columnIndex)
                   }
                 />

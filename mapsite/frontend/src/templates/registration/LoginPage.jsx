@@ -61,6 +61,7 @@ function LoginPage() {
         sx={{
           width: 500,
           height: 600,
+          mx: "auto",
           backgroundColor: "white",
           p: "1rem",
           "& .MuiTextField-root": { m: 1, width: "25ch" },
