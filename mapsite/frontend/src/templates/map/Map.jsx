@@ -1,6 +1,6 @@
-import { MapContainer, TileLayer, Polygon, Marker, Popup, useMapEvents, LayerGroup, SVGOverlay } from 'react-leaflet';
-import { useEffect, useState, useRef } from 'react';
-import * as GeoSearch from 'leaflet-geosearch'
+import { MapContainer, TileLayer, Polygon, Marker, Popup, useMapEvents } from 'react-leaflet';
+import { useEffect, useState } from 'react';
+
 
 export default function Map(props) {
     const [data, setData] = useState([{
@@ -19,11 +19,57 @@ export default function Map(props) {
         steel: "40",
         wood: "22",
     }]);
-    const [geometry, setGeometry] = useState([[[]]]);
-    const [filter, setFilter] = useState({});
     const [loading, setLoading] = useState(true);
-    const mapRef = useRef(null);
+    const [filter, setFilter] = useState({});
+    const [displayData, setDisplayData] = useState([]);
 
+    useEffect(() => {
+        //Redo fetch the right way
+        fetch("src/assets/polygonData.json")
+            .then((res) => res.json())
+            .then((data) => setData(data))
+            .finally(setLoading(false))
+
+        console.log(data)
+    }, [])
+
+
+    useEffect(() => {
+        setFilter(props.filter);
+    }, [props.filter]);
+
+    useEffect(() => {
+        let newDisplayData = [];
+        let noFilter = true;
+
+        const filterArray = Object.values(filter);
+
+        for (let i = 0; i < filterArray.length; i++) {
+            if (filterArray[i] === "") {
+                filterArray.splice(i, 1);
+                i--;
+            } else {
+                if(noFilter) {
+                    noFilter = false;
+                }
+            }
+        }
+
+        if(!noFilter) {
+            data.forEach((building) => {
+                //Checks if the current building has the correct building code for the filter applied
+                if((filterArray.includes(building.osmid[0]))) {
+                    newDisplayData.push(building);
+                }
+            });
+        } else {
+            newDisplayData = data;
+        }
+        setDisplayData(newDisplayData);
+
+    }, [filter, data]);
+
+    
     const colorPicker = (value) => {
         if(value < 20) {
             return { color: "#F6BDC0" }
@@ -38,57 +84,24 @@ export default function Map(props) {
         }
     }
 
-    useEffect(() => {
-        const map = mapRef.current;
-
-        if (map) {
-            // Create and add the GeoSearch control
-            const searchControl = new GeoSearch.GeoSearchControl({
-              provider: new GeoSearch.OpenStreetMapProvider(),
-              style: 'bar', // Customize the style here (bar or button)
-              searchLabel: 'Skriv inn adresse',
-            });
-            map.addControl(searchControl);
-        }
-        //Redo fetch the right way
-        fetch("src/assets/polygonData.json")
-            .then((res) => res.json())
-            .then((data) => setData(data))
-            .finally(setLoading(false))
-        // setLoading(false)
-
-        let polygons = []
-        
-        data.map(building => {
-            if(true) {
-                polygons.push(building.geometry);
-            }
-        })
-        setGeometry(polygons);
-    }, [])
-
     return(
         <>
         {loading
         ? <h1>Loading...</h1>
         :
-          <MapContainer ref={mapRef} center={[63.430482, 10.394962]} zoom={13} scrollWheelZoom={true}>
+          <MapContainer center={[63.430482, 10.39496]} zoom={13} scrollWheelZoom={true}>
             <TileLayer
                 attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                 url="https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png"
             />
-            <LayerGroup>
-                {/* {data.map((building) => (
-                    <Polygon key={building.osmid} pathOptions={"#FFFF"} positions={building.geometry}/>
-                ))} */}
-                {/* {geometry.map(geo => {
-                    <Polygon key={1} pathOptions={"#FFFF"} positions={geo}/>
-                })} */}
-            </LayerGroup>
-            <Polygon key={1} pathOptions={"#FFFFF"} positions={geometry}/>
-            {/* <SVGOverlay>
-                <polygon points={geometry}></polygon>
-            </SVGOverlay> */}
+            {displayData.map((building) => {
+ 
+                console.log(building.osmid)
+
+                return (
+                <Polygon key={building.osmid} pathOptions={colorPicker(building.steel)} positions={building.geometry}/>
+            )})}
+
             </MapContainer>}
         </>
     )

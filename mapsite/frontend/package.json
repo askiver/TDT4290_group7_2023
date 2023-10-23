@@ -10,11 +10,12 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@babel/core": "^7.22.17",
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
+    "@esbuild/win32-x64": "^0.19.5",
     "@mui/icons-material": "^5.14.11",
     "@mui/material": "^5.14.11",
-    "@babel/core": "^7.22.17",
     "axios": "^0.24.0",
     "leaflet": "^1.9.4",
     "leaflet-geosearch": "^3.9.0",

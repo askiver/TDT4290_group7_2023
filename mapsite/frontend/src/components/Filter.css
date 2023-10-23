@@ -2,17 +2,19 @@
 .filterContainer {
     display: flex;
     flex-direction: column;
-    background-color: white;
+    background-color: #FFFFFF;
     overflow-x: hidden;
     margin: 0px 10px 0px 0px;
-    padding: 100px 10px 0px 10px;
+    padding: 5vh 1vw 0px 1vw;
     border-radius: 0% 2% 2% 0%;
     position: absolute;
-    height: calc(100%-100px);
+    height: calc(100% - 5vh);
     left: 0;
     top: 0;
+    transition: 100ms;
     z-index: 1050;
 }
+
 
 .filterContainer_buildingFilter {
     display: flex;
@@ -25,7 +27,7 @@
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    overflow-x: auto;
+    overflow-x: hidden;
 }
 
 .filterTitle {
@@ -42,7 +44,7 @@
     flex-direction: row;
     align-items: center;
     text-wrap: nowrap;
-    background-color: green;
+    border: 1px solid black;
     border-radius: 5px;
 }
 
@@ -66,7 +68,16 @@
     border-top: 2px solid grey;
 }
 
-.filterContainer_drawerButton {
+.filterContainer_drawerButtonApply {
     margin: 10% 0% 10% 0%;
     border-radius: 100vh;
+    z-index: 1100;
+}
+
+.filterContainer_drawerButtonShow {
+    position: absolute;
+    margin: 0px 0px 0px 1vw;
+    top: 50%;
+    left: 0;
+    z-index: 1050;
 }
