@@ -1,0 +1,83 @@
+
+.filterContainer {
+    display: flex;
+    flex-direction: column;
+    background-color: #FFFFFF;
+    overflow-x: hidden;
+    margin: 0px 10px 0px 0px;
+    padding: 5vh 1vw 0px 1vw;
+    border-radius: 0% 2% 2% 0%;
+    position: absolute;
+    height: calc(100% - 5vh);
+    left: 0;
+    top: 0;
+    transition: 100ms;
+    z-index: 1050;
+}
+
+
+.filterContainer_buildingFilter {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    overflow-x: hidden;
+}
+
+.filterContainer_materialFilter {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    overflow-x: hidden;
+}
+
+.filterTitle {
+    font-size: 2rem;
+    font-weight: 200;
+    margin-bottom: 0;
+}
+
+.filterButton_container {
+    padding: 0.5vh 1vw 0.5vh 1vw;
+    margin: 0.5vh 1vw 0.5vh 1vw;
+    width: calc(100% - 4vw);
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    text-wrap: nowrap;
+    border: 1px solid black;
+    border-radius: 5px;
+}
+
+.filterButton_container > label {
+    padding: 0px 0px 0px 0.5vw;
+}
+
+.filterButton_container > input{
+    
+}
+
+.filterContainer_filterTypeText {
+    margin-bottom: 0;
+    font-weight: 250;
+}
+
+.filterContainer_filterTypeDivide {
+    margin-top: 0;
+    margin-bottom: 1vh;
+    width: 100%;
+    border-top: 2px solid grey;
+}
+
+.filterContainer_drawerButtonApply {
+    margin: 10% 0% 10% 0%;
+    border-radius: 100vh;
+    z-index: 1100;
+}
+
+.filterContainer_drawerButtonShow {
+    position: absolute;
+    margin: 0px 0px 0px 1vw;
+    top: 50%;
+    left: 0;
+    z-index: 1050;
+}
