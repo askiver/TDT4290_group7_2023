@@ -161,3 +161,6 @@ cython_debug/
 
 #Ignore data in geoJSON directory
 /mapsite/mapsite/geoJSON/
+
+# Ignore package-lock.json file
+package-lock.json
