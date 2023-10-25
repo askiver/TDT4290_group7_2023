@@ -100,3 +100,14 @@ def send_json(request):
         f = open('geoJSON/finalJson.json')
         data = json.load(f)
         return JsonResponse(data, status=status.HTTP_200_OK)
+
+@api_view(['POST'])
+def predict_materials(request):
+    if request.method == "POST":
+        # Decode JSON data from the request body
+        request_data = json.loads(request.body.decode('utf-8'))
+
+        # Load JSON data
+        with open('train.json', 'r') as file:
+            data = json.load(file)
+            df = pd.DataFrame(data["data"])

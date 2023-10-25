@@ -1,0 +1,44 @@
+{
+  "data": [
+    {
+      "building_type": "Residential",
+      "building_year": 1995,
+      "total_square_meters": 120,
+      "number_of_floors": 2,
+      "wood": 100.5,
+      "metals": 50.3
+    },
+    {
+      "building_type": "Commercial",
+      "building_year": 2005,
+      "total_square_meters": 500,
+      "number_of_floors": 4,
+      "wood": 45.8,
+      "metals": 75.2
+    },
+    {
+      "building_type": "Industrial",
+      "building_year": 1985,
+      "total_square_meters": 1000,
+      "number_of_floors": 1,
+      "wood": 25.4,
+      "metals": 110.1
+    },
+    {
+      "building_type": "Residential",
+      "building_year": 2010,
+      "total_square_meters": 85,
+      "number_of_floors": 3,
+      "wood": 85.7,
+      "metals": 60.4
+    },
+    {
+      "building_type": "Commercial",
+      "building_year": 2000,
+      "total_square_meters": 300,
+      "number_of_floors": 5,
+      "wood": 60.6,
+      "metals": 70.9
+    }
+  ]
+}
