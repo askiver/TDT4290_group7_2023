@@ -20,13 +20,19 @@ def prepare_data(data):
     # Transform building_type column into one-hot encoded columns
     building_type_encoded_df = pd.DataFrame(building_type_encoded.transform(df[['building_type']]).toarray(), columns=feature_names)
 
-    print(building_type_encoded_df)
+    # Drop building_type column from original dataframe
+    df = df.drop(columns=['building_type'])
+
+    # Concatenate original dataframe with one-hot encoded columns
+    df = pd.concat([df, building_type_encoded_df], axis=1)
+
+    return df
 
 
 with open('train.json', 'r') as file:
     data = json.load(file)
     df = pd.DataFrame(data["data"])
 
-prepare_data(data)
+print(prepare_data(data))
 
 

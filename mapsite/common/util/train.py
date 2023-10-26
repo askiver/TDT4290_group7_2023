@@ -2,6 +2,7 @@ import json
 import pandas as pd
 import xgboost as xgb
 import sklearn
+from mapsite.common.util.prepare_data import prepare_data
 
 # Load JSON data
 with open('train.json', 'r') as file:
@@ -9,7 +10,7 @@ with open('train.json', 'r') as file:
     df = pd.DataFrame(data["data"])
 
 
-df = pd.get_dummies(df, columns=['building_type'], drop_first=True)
+df = prepare_data(data)
 
 # Split data into features and targets
 X = df.drop(columns=['wood', 'metals'])
