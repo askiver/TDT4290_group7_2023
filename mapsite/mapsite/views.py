@@ -143,10 +143,12 @@ def test_file_save(request):
 @api_view(["GET"])
 def generated_waste_reports_to_DB(request):
     for i in range(1, 736):
-        filepath = "D:\Users\Luka\Documents\Studie\MTDT-5.Semester\KundestyrtProsjekt\data\wasteReport\wasteReportGENERATED{j}.json",format(j=str(i))
-        with open(filepath, 'r') as file:
+        filepath = r"D:\Users\Luka\Documents\Studie\MTDT-5.Semester\KundestyrtProsjekt\data\wasteReport\wasteReportGENERATED{j}.json".format(
+            j=str(i)
+        )
+        with open(filepath, "r") as file:
             data = json.load(file)
             waste_report = WasteReport(report=data)
             waste_report.save()
-            
+
     return Response(status=status.HTTP_200_OK)
