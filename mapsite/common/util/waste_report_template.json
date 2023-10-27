@@ -1,0 +1,144 @@
+{
+    "wasteReport": {
+        "property": {
+            "snr": 0,
+            "bnr": 0,
+            "festenr": 0,
+            "sectionnr": 0,
+            "buildingnr": 0,
+            "residentialnr": 0,
+            "county": "",
+            "address": "",
+            "postalCode": 0,
+            "postalArea": ""
+        },
+        "ordinaryWaste": {
+            "wood": {
+                "amountTotal": 0,
+                "waste": {
+                    "amount": 0,
+                    "location": ""
+                },
+                "recycled": {
+                    "amount": 0,
+                    "location": ""
+                }
+            },
+            "paper": {
+                "amountTotal": 0,
+                "waste": {
+                    "amount": 0,
+                    "location": ""
+                },
+                "recycled": {
+                    "amount": 0,
+                    "location": ""
+                }
+            },
+            "glass": {
+                "amountTotal": 0,
+                "waste": {
+                    "amount": 0,
+                    "location": ""
+                },
+                "recycled": {
+                    "amount": 0,
+                    "location": ""
+                }
+            },
+            "metal": {
+                "amountTotal": 0,
+                "waste": {
+                    "amount": 0,
+                    "location": ""
+                },
+                "recycled": {
+                    "amount": 0,
+                    "location": ""
+                }
+            },
+            "plaster": {
+                "amountTotal": 0,
+                "waste": {
+                    "amount": 0,
+                    "location": ""
+                },
+                "recycled": {
+                    "amount": 0,
+                    "location": ""
+                }
+            },
+            "plastic": {
+                "amountTotal": 0,
+                "waste": {
+                    "amount": 0,
+                    "location": ""
+                },
+                "recycled": {
+                    "amount": 0,
+                    "location": ""
+                }
+            },
+            "concrete": {
+                "amountTotal": 0,
+                "waste": {
+                    "amount": 0,
+                    "location": ""
+                },
+                "recycled": {
+                    "amount": 0,
+                    "location": ""
+                }
+            },
+            "pConcrete": {
+                "amountTotal": 0,
+                "waste": {
+                    "amount": 0,
+                    "location": ""
+                },
+                "recycled": {
+                    "amount": 0,
+                    "location": ""
+                }
+            },
+            "eWaste": {
+                "amountTotal": 0,
+                "waste": {
+                    "amount": 0,
+                    "location": ""
+                },
+                "recycled": {
+                    "amount": 0,
+                    "location": ""
+                }
+            }
+        },
+        "dangerousWaste": {
+            "surfaceTreatmentWaste": {
+                "amountTotal": 0,
+                "waste": {
+                    "amount": 0,
+                    "location": ""
+                },
+                "recycled": {
+                    "amount": 0,
+                    "location": ""
+                }
+            }
+        },
+        "sumSortedOrdinaryWaste": 0,
+        "sumSortedDangerousWaste": 0,
+        "sumTotalWaste": 0,
+        "sortingDeg": 0,
+        "wastePerArea": 0,
+        "remainingWaste": "",
+        "declarationAndSignature": {
+            "org": "",
+            "contact": "",
+            "phone": "",
+            "cellphone": "",
+            "email": "",
+            "date": ""
+        }
+    }
+}

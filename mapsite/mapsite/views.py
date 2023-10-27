@@ -11,6 +11,9 @@ from django.views import generic
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+from common.util.utility_functions import predict_waste_report, train_waste_report, \
+    save_predicted_material_usage
+from mapsite.models import WasteReport
 
 
 def index(request):
@@ -102,12 +105,26 @@ def send_json(request):
         return JsonResponse(data, status=status.HTTP_200_OK)
 
 @api_view(['POST'])
-def predict_materials(request):
+def submit_waste_report(request):
     if request.method == "POST":
         # Decode JSON data from the request body
         request_data = json.loads(request.body.decode('utf-8'))
+        # Save report to database
+        waste_report = WasteReport(report=request_data)
+        waste_report.save()
 
-        # Load JSON data
-        with open('train.json', 'r') as file:
-            data = json.load(file)
-            df = pd.DataFrame(data["data"])
+        # Since a new report has been saved, we should train the model again
+        # First retrieve all reports from the database
+        reports = list(WasteReport.objects.all())
+        # Train the model
+        train_waste_report(reports)
+        # Predict material usage for all buildings
+        predictions = predict_waste_report()
+        # Save predictions to mapdata file
+        save_predicted_material_usage(predictions)
+
+
+@api_view(['GET'])
+def test_file_save(request):
+    save_predicted_material_usage("cool")
+    return Response(status=status.HTTP_200_OK)

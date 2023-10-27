@@ -28,5 +28,6 @@ urlpatterns = [
     path('api/register/', views.register_user, name='register'),
     path('api/check_login/', views.check_login, name='check_login'),
     path('api/get_locations', views.send_json, name='send_json'),
-    path('api/predict_materials', views.predict_materials, name='predict_materials'),
+    path('api/submit_waste_report', views.submit_waste_report, name='submit_waste_report'),
+    path('api/test_file_save', views.test_file_save, name='test_file_save'),
 ]
