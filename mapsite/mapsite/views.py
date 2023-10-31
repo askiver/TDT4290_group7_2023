@@ -1,5 +1,4 @@
 import json
-
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
@@ -59,6 +58,7 @@ def register_user(request):
             return Response('Registration successful', status=status.HTTP_201_CREATED)
 
         """
+
         if password1 != password2:
             print("Passwords do not match")
             return Response(
@@ -114,7 +114,7 @@ def send_json(request):
         return JsonResponse(data, status=status.HTTP_200_OK)
 
 
-@api_view(["POST"])
+@api_view(["POST", "GET"])
 def submit_waste_report(request):
     if request.method == "POST":
         # Decode JSON data from the request body
@@ -129,14 +129,35 @@ def submit_waste_report(request):
         # Train the model
         train_waste_report(reports)
         # Predict material usage for all buildings
-        predictions = predict_waste_report()
+        #predictions = predict_waste_report()
         # Save predictions to mapdata file
-        save_predicted_material_usage(predictions)
+        save_predicted_material_usage()
+
+    if request.method == "GET":
+        # Since a new report has been saved, we should train the model again
+        # First retrieve all reports from the database
+        waste_reports = reports = list(WasteReport.objects.all())[:100]
+        # Create a list of all reports
+        reports = []
+        for waste_report in waste_reports:
+            reports.append(waste_report.report)
+
+        # Train the model
+        train_waste_report(reports)
+        # Predict material usage for all buildings
+        # predictions = predict_waste_report()
+        # Save predictions to mapdata file
+        save_predicted_material_usage()
+    return Response(status=status.HTTP_200_OK)
 
 
 @api_view(["GET"])
 def test_file_save(request):
-    save_predicted_material_usage("cool")
+    #save_predicted_material_usage("cool")
+    # Get a waste report
+    waste_report = WasteReport.objects.all()[0]
+    # Print report
+    print(waste_report.report[0])
     return Response(status=status.HTTP_200_OK)
 
 
