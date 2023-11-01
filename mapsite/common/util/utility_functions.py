@@ -10,8 +10,9 @@ from sklearn.preprocessing import OneHotEncoder
 def get_target_columns():
     # Load json file
     column_names = []
-    with open('waste_report_template.json', 'r') as file:
+    with open('/Users/askiversylte/PycharmProjects/TDT4290_group7_2023/mapsite/common/util/waste_report_template.json', 'r') as file:
         data = json.load(file)
+        print(data)
 
         for key, item in data['ordinaryWaste'].items():
             column_names.append(key + '_waste_amount')
@@ -82,6 +83,9 @@ def prepare_data(data):
     data = pd.DataFrame(data)
     # cast code column to int
     data['bnr'] = data['bnr'].astype(int)
+    data['stories'] = data['stories'].astype(int)
+    data['area'] = data['area'].astype(int)
+    data['building_year'] = data['building_year'].astype(int)
     # if bnr is 0, set it to 111
     data['bnr'] = data['bnr'].replace(0, 111)
     import chardet
@@ -145,7 +149,13 @@ def prepare_data_waste_report(data):
     #data = json.load(data)
 
     column_names.append('bnr')
+    column_names.append('area')
+    column_names.append('stories')
+    column_names.append('building_year')
     column_values.append(int(data['property']['bnr']))
+    column_values.append(int(data['property']['area']))
+    column_values.append(int(data['property']['stories']))
+    column_values.append(int(data['property']['building_year']))
 
     for key, item in data['ordinaryWaste'].items():
         column_names.append(key + '_waste_amount')
@@ -231,9 +241,9 @@ def save_predicted_material_usage():
                 'osmid': entry['osmid'],
                 'bnr': entry['buildingcode'],
                 # Transform building year into int
-                'building_year': year ,
                 'area': entry['area'],
                 'stories': entry['stories'],
+                'building_year': year ,
             }
             buildings.append(building)
 
