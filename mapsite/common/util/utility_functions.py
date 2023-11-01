@@ -10,8 +10,7 @@ from sklearn.preprocessing import OneHotEncoder
 def get_target_columns():
     # Load json file
     column_names = []
-    with open('/Users/askiversylte/PycharmProjects/TDT4290_group7_2023/mapsite/common/util/waste_report_template.json',
-              'r') as file:
+    with open('common/util/waste_report_template.json','r') as file:
         data = json.load(file)
 
         for key, item in data['ordinaryWaste'].items():
@@ -39,15 +38,15 @@ def handle_features(data):
 # Encodes building category into three one-hot encoded columns based on the building code
 def encode_building_category(data):
     # Load file containing all building codes
-    with open('/Users/askiversylte/PycharmProjects/TDT4290_group7_2023/mapsite/common/util/building_codes.csv',
+    with open('common/util/building_codes.csv',
               'rb') as file:
         rawdata = file.read()
         result = chardet.detect(rawdata)
         charenc = result['encoding']
     building_codes = pd.read_csv(
-        '/Users/askiversylte/PycharmProjects/TDT4290_group7_2023/mapsite/common/util/building_codes.csv',
+        'common/util/building_codes.csv',
         sep=';',
-        encoding=charenc, )
+        encoding=charenc,)
     building_codes['level_1'] = building_codes['code'] // 100
     building_codes['level_2'] = (building_codes['code'] % 100) // 10
     building_codes['level_3'] = building_codes['code'] % 10
@@ -102,7 +101,7 @@ def predict_materials(data):
 def predict_waste_report(data):
     bst = xgb.Booster()  # init model
     # load model
-    bst.load_model('/Users/askiversylte/PycharmProjects/TDT4290_group7_2023/mapsite/common/util/model.json')
+    bst.load_model('common/util/model.json')
     # prepare data
     df = prepare_data_prediction(data)
     # Drop id column before prediction
@@ -165,7 +164,7 @@ def train_waste_report(data):
 
     reg.fit(X, targets)
 
-    reg.save_model('/Users/askiversylte/PycharmProjects/TDT4290_group7_2023/mapsite/common/util/model.json')
+    reg.save_model('common/util/model.json')
 
 
 def handle_float32(obj):
@@ -177,7 +176,7 @@ def handle_float32(obj):
 def save_predicted_material_usage():
     # First load relevant data from mapdata.json
     buildings = []
-    with open('/Users/askiversylte/PycharmProjects/TDT4290_group7_2023/mapsite/frontend/src/assets/mapData1.json',
+    with open('frontend/src/assets/mapData1.json',
               'r') as file:
         data = json.load(file)
         for entry in data:
@@ -212,6 +211,6 @@ def save_predicted_material_usage():
             data[i][col] = predicted_buildings[col][i]
 
     # Then save the data to mapdata.json
-    with open('/Users/askiversylte/PycharmProjects/TDT4290_group7_2023/mapsite/frontend/src/assets/testmapData.json',
+    with open('frontend/src/assets/mapData1.json',
               'w') as file:
         json.dump(data, file, default=handle_float32, indent=4)
