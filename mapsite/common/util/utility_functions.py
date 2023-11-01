@@ -1,6 +1,7 @@
 import json
 from datetime import datetime
 
+import chardet
 import numpy as np
 import pandas as pd
 import xgboost as xgb
@@ -10,9 +11,9 @@ from sklearn.preprocessing import OneHotEncoder
 def get_target_columns():
     # Load json file
     column_names = []
-    with open('/Users/askiversylte/PycharmProjects/TDT4290_group7_2023/mapsite/common/util/waste_report_template.json', 'r') as file:
+    with open('/Users/askiversylte/PycharmProjects/TDT4290_group7_2023/mapsite/common/util/waste_report_template.json',
+              'r') as file:
         data = json.load(file)
-        print(data)
 
         for key, item in data['ordinaryWaste'].items():
             column_names.append(key + '_waste_amount')
@@ -25,12 +26,70 @@ def get_target_columns():
     return column_names
 
 
+def handle_features(data):
+    # cast code column to int
+    data['bnr'] = data['bnr'].astype(int)
+    data['stories'] = data['stories'].astype(int)
+    data['area'] = data['area'].astype(int)
+    data['building_year'] = data['building_year'].astype(int)
+    # if bnr is 0, set it to 111
+    data['bnr'] = data['bnr'].replace(0, 111)
+    return data
+
+
+# Encodes building category into three one-hot encoded columns based on the building code
+def encode_building_category(data):
+    # Load file containing all building codes
+    with open('/Users/askiversylte/PycharmProjects/TDT4290_group7_2023/mapsite/common/util/building_codes.csv',
+              'rb') as file:
+        rawdata = file.read()
+        result = chardet.detect(rawdata)
+        charenc = result['encoding']
+    building_codes = pd.read_csv(
+        '/Users/askiversylte/PycharmProjects/TDT4290_group7_2023/mapsite/common/util/building_codes.csv',
+        sep=';',
+        encoding=charenc, )
+    building_codes['level_1'] = building_codes['code'] // 100
+    building_codes['level_2'] = (building_codes['code'] % 100) // 10
+    building_codes['level_3'] = building_codes['code'] % 10
+
+    data['bnr_level_1'] = data['bnr'] // 100
+    data['bnr_level_2'] = (data['bnr'] % 100) // 10
+    data['bnr_level_3'] = data['bnr'] % 10
+
+    for i in range(1, 4):
+        # Possible categories
+        categories = sorted(list(set(building_codes['level_' + str(i)].to_list())))
+        # building_types = pd.DataFrame({'bnr': building_codes['code'].to_list()})
+        building_types = pd.DataFrame({'bnr_level_' + str(i): categories})
+        # Initialize OneHotEncoder with predefined categories
+        encoder = OneHotEncoder(categories=[categories], handle_unknown='error')
+
+        # Transform bnr column into one-hot encoded columns
+        building_type_encoded = encoder.fit(building_types[['bnr_level_' + str(i)]])
+
+        # Getting feature names
+        feature_names = encoder.get_feature_names_out(input_features=building_types.columns)
+
+        # Transform building_type column into one-hot encoded columns
+        building_type_encoded_df = pd.DataFrame(
+            building_type_encoded.transform(data[['bnr_level_' + str(i)]]).toarray(),
+            columns=feature_names)
+        # Concatenate original dataframe with one-hot encoded columns
+        data = pd.concat([data, building_type_encoded_df], axis=1)
+
+    # Drop bnr columns
+    data = data.drop(columns=['bnr', 'bnr_level_1', 'bnr_level_2', 'bnr_level_3'])
+
+    return data
+
+
 def predict_materials(data):
     bst = xgb.Booster()  # init model
     bst.load_model(
         '/Users/askiversylte/PycharmProjects/TDT4290_group7_2023/mapsite/common/util/model.json')  # load model
     # prepare data
-    df = prepare_data(data)
+    df = prepare_data_prediction(data)
     # Get id column
     osmid = df['osmid']
     # Drop id column
@@ -46,7 +105,7 @@ def predict_materials(data):
     # Prepare new dataframe
     new_df = pd.DataFrame()
     # Add osmid column
-    #new_df['osmid'] = osmid
+    # new_df['osmid'] = osmid
     # Combine values of related target columns
     for i in range(0, len(prediction.columns), 2):
         # Find prefix of column name
@@ -72,120 +131,44 @@ def predict_waste_report(data):
     prediction = bst.predict(df)
     # Add id column to prediction
     prediction = pd.concat([osmid, pd.DataFrame(prediction)], axis=1)
-    print(prediction)
     # Find target columns
     target_columns = [col for col in prediction.columns if 'amount' in col]
     targets = prediction[target_columns]
     return prediction
 
-def prepare_data(data):
+
+def prepare_data_prediction(data):
     # create dataframe from from list of dictionaries
     data = pd.DataFrame(data)
-    # cast code column to int
-    data['bnr'] = data['bnr'].astype(int)
-    data['stories'] = data['stories'].astype(int)
-    data['area'] = data['area'].astype(int)
-    data['building_year'] = data['building_year'].astype(int)
-    # if bnr is 0, set it to 111
-    data['bnr'] = data['bnr'].replace(0, 111)
-    import chardet
-    # Find all possible categories based on content of csv file
-    with open('/Users/askiversylte/PycharmProjects/TDT4290_group7_2023/mapsite/common/util/building_codes.csv',
-              'rb') as file:
-        rawdata = file.read()
-        result = chardet.detect(rawdata)
-        charenc = result['encoding']
-    building_codes = pd.read_csv(
-        '/Users/askiversylte/PycharmProjects/TDT4290_group7_2023/mapsite/common/util/building_codes.csv',
-        sep=';',
-        encoding=charenc, )
-    # Only use third level building codes
-    building_codes = building_codes[building_codes['level'] == 3]
-    # Possible categories
-    categories = building_codes['code'].to_list()
-    building_types = pd.DataFrame({'bnr': building_codes['code'].to_list()})
-    # Initialize OneHotEncoder with predefined categories
-    encoder = OneHotEncoder(categories=[categories], handle_unknown='error')
 
-    # Transform bnr column into one-hot encoded columns
-    building_type_encoded = encoder.fit(building_types[['bnr']])
+    # handle features
+    data = handle_features(data)
 
-    # Getting feature names
-    feature_names = encoder.get_feature_names_out(input_features=building_types.columns)
-
-    # Transform building_type column into one-hot encoded columns
-    building_type_encoded_df = pd.DataFrame(building_type_encoded.transform(data[['bnr']]).toarray(),
-                                            columns=feature_names)
-
-    # Drop building_type column from original dataframe
-    data = data.drop(columns=['bnr'])
-
-    # Concatenate original dataframe with one-hot encoded columns
-    data = pd.concat([data, building_type_encoded_df], axis=1)
+    # encode building category
+    data = encode_building_category(data)
 
     return data
 
-def prepare_data_waste_report(data):
-    import chardet
-    # Find all possible categories based on content of csv file
-    with open('/Users/askiversylte/PycharmProjects/TDT4290_group7_2023/mapsite/common/util/building_codes.csv', 'rb') as file:
-        rawdata = file.read()
-        result = chardet.detect(rawdata)
-        charenc = result['encoding']
-    building_codes = pd.read_csv('/Users/askiversylte/PycharmProjects/TDT4290_group7_2023/mapsite/common/util/building_codes.csv',
-                                sep=';',
-                                 encoding=charenc,)
-    # Only use third level building codes
-    building_codes = building_codes[building_codes['level'] == 3]
-    # Possible categories
-    categories = building_codes['code'].to_list()
-    building_types = pd.DataFrame({'bnr': building_codes['code'].to_list()})
-    # Initialize OneHotEncoder with predefined categories
-    encoder = OneHotEncoder(categories=[categories], handle_unknown='error')
 
-    column_names = []
-    column_values = []
-    # Get relevant data from json file
-    #data = json.load(data)
+def prepare_data_waste_report(data_list):
+    dfs = [pd.json_normalize(data) for data in data_list]
 
-    column_names.append('bnr')
-    column_names.append('area')
-    column_names.append('stories')
-    column_names.append('building_year')
-    column_values.append(int(data['property']['bnr']))
-    column_values.append(int(data['property']['area']))
-    column_values.append(int(data['property']['stories']))
-    column_values.append(int(data['property']['building_year']))
+    # Concatenate all dataframes together
+    df = pd.concat(dfs, ignore_index=True)
+    # Rename columns for consistency
+    df.columns = (df.columns.str.replace('ordinaryWaste.', '', regex=False)
+                  .str.replace('dangerousWaste.', '', regex=False)
+                  .str.replace('property.', '', regex=False)
+                  .str.replace('.', '_', regex=False))
+    pd.set_option('display.max_columns', None)
 
-    for key, item in data['ordinaryWaste'].items():
-        column_names.append(key + '_waste_amount')
-        column_values.append(item['waste']['amount'])
-        column_names.append(key + '_recycled_amount')
-        column_values.append(item['recycled']['amount'])
+    # Only keep relevant columns
+    df = df[['bnr', 'area', 'stories', 'building_year'] + get_target_columns()]
 
-    for key, item in data['dangerousWaste'].items():
-        column_names.append(key + '_waste_amount')
-        column_values.append(item['waste']['amount'])
-        column_names.append(key + '_recycled_amount')
-        column_values.append(item['recycled']['amount'])
+    df = handle_features(df)
 
-    # Make dataframe from json file
-    df = pd.DataFrame([column_values], columns=column_names)
     # Transform bnr column into one-hot encoded columns
-    building_type_encoded = encoder.fit(building_types[['bnr']])
-
-    # Getting feature names
-    feature_names = encoder.get_feature_names_out(input_features=building_types.columns)
-
-    # Transform building_type column into one-hot encoded columns
-    building_type_encoded_df = pd.DataFrame(building_type_encoded.transform(df[['bnr']]).toarray(),
-                                            columns=feature_names)
-
-    # Drop building_type column from original dataframe
-    df = df.drop(columns=['bnr'])
-
-    # Concatenate original dataframe with one-hot encoded columns
-    df = pd.concat([df, building_type_encoded_df], axis=1)
+    df = encode_building_category(df)
 
     return df
 
@@ -193,23 +176,15 @@ def prepare_data_waste_report(data):
 def train_waste_report(data):
     # Prepare data
     # data is a list of dictionaries
-    df = prepare_data_waste_report(data[0])
-    for i in range(1, len(data)):
-        row = prepare_data_waste_report(data[i])
-        df = pd.concat([df, row], axis=0)
-
-    # Find all column names that contain 'amount'
-    target_columns = [col for col in df.columns if 'amount' in col]
+    df = prepare_data_waste_report(data)
 
     # Split data into features and targets
-    X = df.drop(columns=target_columns)
-    targets = df[target_columns]
+    X = df.drop(columns=get_target_columns())
+    targets = df[get_target_columns()]
 
     reg = xgb.XGBRegressor()
 
     reg.fit(X, targets)
-
-    prediction = reg.predict(X)
 
     reg.save_model('/Users/askiversylte/PycharmProjects/TDT4290_group7_2023/mapsite/common/util/model.json')
 
@@ -243,7 +218,7 @@ def save_predicted_material_usage():
                 # Transform building year into int
                 'area': entry['area'],
                 'stories': entry['stories'],
-                'building_year': year ,
+                'building_year': year,
             }
             buildings.append(building)
 
@@ -256,7 +231,6 @@ def save_predicted_material_usage():
         for col in predicted_buildings.columns:
             data[i][col] = predicted_buildings[col][i]
 
-    print(data)
     # Then save the data to mapdata.json
     with open('/Users/askiversylte/PycharmProjects/TDT4290_group7_2023/mapsite/frontend/src/assets/testmapData.json',
               'w') as file:

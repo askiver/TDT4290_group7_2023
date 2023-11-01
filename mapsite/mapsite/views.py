@@ -136,9 +136,8 @@ def submit_waste_report(request):
     if request.method == "GET":
         # Since a new report has been saved, we should train the model again
         # First retrieve all reports from the database
-        waste_reports = reports = list(WasteReport.objects.all())[:100]
+        waste_reports = list(WasteReport.objects.all())
         # Print a report
-        print(waste_reports[0].report)
         # Create a list of all reports
         reports = []
         for waste_report in waste_reports:
