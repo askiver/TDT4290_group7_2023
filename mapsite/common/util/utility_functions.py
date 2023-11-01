@@ -84,28 +84,11 @@ def encode_building_category(data):
     return data
 
 
+# Method that uses waste report prediction for a given building to give material usage
 def predict_materials(data):
-    bst = xgb.Booster()  # init model
-    bst.load_model(
-        '/Users/askiversylte/PycharmProjects/TDT4290_group7_2023/mapsite/common/util/model.json')  # load model
-    # prepare data
-    df = prepare_data_prediction(data)
-    # Get id column
-    osmid = df['osmid']
-    # Drop id column
-    df = df.drop(columns=['osmid'])
-    # Convert dataframe to DMatrix
-    df = xgb.DMatrix(df)
-    # Make prediction
-    prediction = bst.predict(df)
-    # Add id column to prediction
-    prediction = pd.DataFrame(prediction)
-    # Add column names
-    prediction.columns = get_target_columns()
+    prediction = predict_waste_report(data)
     # Prepare new dataframe
     new_df = pd.DataFrame()
-    # Add osmid column
-    # new_df['osmid'] = osmid
     # Combine values of related target columns
     for i in range(0, len(prediction.columns), 2):
         # Find prefix of column name
@@ -116,25 +99,22 @@ def predict_materials(data):
     return new_df
 
 
+# Method for predicting all relevant waste report values for a given building
 def predict_waste_report(data):
     bst = xgb.Booster()  # init model
-    bst.load_model('model.json')  # load model
+    # load model
+    bst.load_model('/Users/askiversylte/PycharmProjects/TDT4290_group7_2023/mapsite/common/util/model.json')
     # prepare data
-    df = prepare_data_waste_report(data)
-    # Get id column
-    osmid = df['osmid']
+    df = prepare_data_prediction(data)
     # Drop id column before prediction
     df = df.drop(columns=['osmid'])
     # Convert dataframe to DMatrix
     df = xgb.DMatrix(df)
     # Make prediction
     prediction = bst.predict(df)
-    # Add id column to prediction
-    prediction = pd.concat([osmid, pd.DataFrame(prediction)], axis=1)
-    # Find target columns
-    target_columns = [col for col in prediction.columns if 'amount' in col]
-    targets = prediction[target_columns]
-    return prediction
+    # Convert prediction to dataframe
+    df_predictions = pd.DataFrame(prediction, columns=get_target_columns())
+    return df_predictions
 
 
 def prepare_data_prediction(data):
@@ -205,7 +185,8 @@ def save_predicted_material_usage():
             # Get date string
             date_str = entry['date']
             if not date_str:
-                year = 0
+                # Let's just assume a probable year if there is no date
+                year = 1970
             else:
                 # Parse the date string using datetime
                 parsed_date = datetime.strptime(date_str, '%Y-%m-%dT%H:%M:%S%z')
