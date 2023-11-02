@@ -116,7 +116,7 @@ def predict_waste_report(data):
 
 
 def prepare_data_prediction(data):
-    # create dataframe from from list of dictionaries
+    # create dataframe from list of dictionaries
     data = pd.DataFrame(data)
 
     # handle features
