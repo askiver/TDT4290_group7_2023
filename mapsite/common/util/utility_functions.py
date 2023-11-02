@@ -138,7 +138,6 @@ def prepare_data_waste_report(data_list):
                   #.str.replace('dangerousWaste.', '', regex=False)
                   #.str.replace('ordinaryWaste.', '', regex=False)
                   .str.replace('.', '_', regex=False))
-    pd.set_option('display.max_columns', None)
 
     # Only keep relevant columns
     df = df[['bnr', 'area', 'stories', 'building_year'] + get_target_columns()]
