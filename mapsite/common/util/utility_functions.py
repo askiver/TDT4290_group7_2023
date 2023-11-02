@@ -14,12 +14,12 @@ def get_target_columns():
         data = json.load(file)
 
         for key, item in data['ordinaryWaste'].items():
-            column_names.append(key + '_waste_amount')
-            column_names.append(key + '_recycled_amount')
+            column_names.append('ordinaryWaste_' + key + '_waste_amount')
+            column_names.append('ordinaryWaste_' + key + '_recycled_amount')
 
         for key, item in data['dangerousWaste'].items():
-            column_names.append(key + '_waste_amount')
-            column_names.append(key + '_recycled_amount')
+            column_names.append('dangerousWaste_' + key + '_waste_amount')
+            column_names.append('dangerousWaste_' + key + '_recycled_amount')
 
     return column_names
 
@@ -90,7 +90,7 @@ def predict_materials(data):
     # Combine values of related target columns
     for i in range(0, len(prediction.columns), 2):
         # Find prefix of column name
-        prefix = prediction.columns[i].split('_')[0]
+        prefix = prediction.columns[i].split('_')[1]
         # Add values of related columns
         new_df[prefix] = prediction[prediction.columns[i]] + prediction[prediction.columns[i + 1]]
     # Return new dataframe
@@ -134,9 +134,9 @@ def prepare_data_waste_report(data_list):
     # Concatenate all dataframes together
     df = pd.concat(dfs, ignore_index=True)
     # Rename columns for consistency
-    df.columns = (df.columns.str.replace('ordinaryWaste.', '', regex=False)
-                  .str.replace('dangerousWaste.', '', regex=False)
-                  .str.replace('property.', '', regex=False)
+    df.columns = (df.columns.str.replace('property.', '', regex=False)
+                  #.str.replace('dangerousWaste.', '', regex=False)
+                  #.str.replace('ordinaryWaste.', '', regex=False)
                   .str.replace('.', '_', regex=False))
     pd.set_option('display.max_columns', None)
 

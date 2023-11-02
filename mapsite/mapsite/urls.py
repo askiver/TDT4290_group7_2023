@@ -28,9 +28,8 @@ urlpatterns = [
     path("api/register/", views.register_user, name="register"),
     path("api/check_login/", views.check_login, name="check_login"),
     path("api/get_locations", views.send_json, name="send_json"),
-    path(
-        "api/submit_waste_report", views.submit_waste_report, name="submit_waste_report"
-    ),
+    path("api/submit_waste_report", views.submit_waste_report, name="submit_waste_report"),
+    path("api/generate_waste_report", views.generate_waste_report, name="generate_waste_report"),
     path("api/test_file_save", views.test_file_save, name="test_file_save"),
     path("api/saveGenerated", views.generated_waste_reports_to_DB, name="'testDBSave"),
 ]

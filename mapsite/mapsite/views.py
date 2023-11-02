@@ -129,7 +129,7 @@ def submit_waste_report(request):
         # Train the model
         train_waste_report(reports)
         # Predict material usage for all buildings
-        #predictions = predict_waste_report()
+        # predictions = predict_waste_report()
         # Save predictions to mapdata file
         save_predicted_material_usage()
 
@@ -152,9 +152,34 @@ def submit_waste_report(request):
     return Response(status=status.HTTP_200_OK)
 
 
+@api_view(["POST"])
+def generate_waste_report(request):
+    # Get features from request body
+    request_data = json.loads(request.body.decode("utf-8"))
+    material_df = predict_waste_report(request_data)
+    # Load Json file of waste report template
+    generated_waste_report = json.load(open("common/util/wasteReportTemplate.json"))
+    # Add request data to waste report
+    generated_waste_report['property']['bnr'] = request_data['property']['bnr']
+    generated_waste_report['property']['area'] = request_data['property']['area']
+    generated_waste_report['property']['stories'] = request_data['property']['stories']
+    generated_waste_report['property']['building_year'] = request_data['property']['building_year']
+    # Add material data to waste report
+    for col in material_df.columns:
+        material_value = material_df[col].values[0]
+        waste_type = col.split('_')[0]
+        material_type = col.split('_')[1]
+        waste_or_recycled = col.split('_')[2]
+        generated_waste_report[waste_type][material_type][waste_or_recycled] = material_value
+        # Also add to the total amount of materials
+        generated_waste_report[waste_type][material_type]['amountTotal'] += material_value
+    # Send waste report back to frontend
+    return JsonResponse(generated_waste_report, status=status.HTTP_200_OK)
+
+
 @api_view(["GET"])
 def test_file_save(request):
-    #save_predicted_material_usage("cool")
+    # save_predicted_material_usage("cool")
     # Get a waste report
     waste_report = WasteReport.objects.all()[0]
     # Print report
