@@ -220,7 +220,6 @@ const WasteReport = (selectedBuilding) => {
                     "",
                     values.recycled,
                     "",
-                    "",
                   ].map((value, index) => (
                     <TableCell style={cellStyle} key={index}>
                       <TextField
@@ -232,6 +231,7 @@ const WasteReport = (selectedBuilding) => {
                       />
                     </TableCell>
                   ))}
+                  <TableCell style={centerCellStyle}>{parseFloat(values.waste)+ parseFloat(values.recycled)}</TableCell>
                 </TableRow>
               )
             )}
@@ -265,7 +265,6 @@ const WasteReport = (selectedBuilding) => {
                     "",
                     values.recycled,
                     "",
-                    "",
                   ].map((value, index) => (
                     <TableCell style={cellStyle} key={index}>
                       <TextField
@@ -276,6 +275,8 @@ const WasteReport = (selectedBuilding) => {
                       />
                     </TableCell>
                   ))}
+                  <TableCell style={centerCellStyle}>{parseFloat(values.waste)+ parseFloat(values.recycled)}</TableCell>
+
                 </TableRow>
               )
             )}
