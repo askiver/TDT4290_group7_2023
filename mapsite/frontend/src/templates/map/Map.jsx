@@ -24,6 +24,7 @@ export default function Map(props) {
     const [filter, setFilter] = useState({});
     const [displayData, setDisplayData] = useState([]);
     const [selectedBuilding, setSelectedBuilding] = useState(null);
+    const [materialFilter, setMaterialFilter] = useState('wood');
     const mapRef = useRef()
 
     useEffect(() => {
@@ -62,20 +63,31 @@ export default function Map(props) {
                 if (filterArray[i] === "") {
                     filterArray.splice(i, 1);
                     i--;
-                } else {
-                    if(noFilter) {
-                        noFilter = false;
-                    }
                 }
             }
         }
 
+        if(filterArray.length != 0) {
+            setMaterialFilter(filterArray[-1]);
+            filterArray.splice(-1)
+            if(filterArray.length != 0) {
+                noFilter = false;
+            }
+        }
+
         if(!noFilter && filterArray != []) {
+            console.log("THIs is the filterArray inside the if");
+            console.log(filterArray)
             data.forEach((building) => {
                 //Checks if the current building has the correct building code for the filter applied
-                if((filterArray.includes(building.osmid[0]))) {
-                    newDisplayData.push(building);
+                console.log(building.buildingcode)
+                if(building.buildingcode != 0 && building.buildingcode) {
+
+                    if((filterArray.includes(building.buildingcode[0]))) {
+                        newDisplayData.push(building);
+                    }
                 }
+
             });
         } else {
             newDisplayData = data;
@@ -119,7 +131,7 @@ export default function Map(props) {
             />
             {displayData.map((building) => {
                 return (
-                <Polygon key={building.osmid} pathOptions={colorPicker(building.steel)} positions={building.geometry} eventHandlers={{click: () => handlePopupOpen(building)}}/>
+                <Polygon key={building.osmid} pathOptions={eval(`colorPicker(building.${materialFilter})`)} positions={building.geometry} eventHandlers={{click: () => handlePopupOpen(building)}}/>
             )})}
             {selectedBuilding && (
             <LocationMarker
