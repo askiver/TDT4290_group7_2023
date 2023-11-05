@@ -130,7 +130,7 @@ const WasteReport = (selectedBuilding) => {
                       <TextField
                         label={name}
                         id={`standard-size-small-${index}`}
-                        defaultValue={value}
+                        defaultValue={value !== 0 ? value : null}
                         size="small"
                         variant="standard"
                         onChange={(e) => handlePropertyChange('property', name, e.target.value)}
