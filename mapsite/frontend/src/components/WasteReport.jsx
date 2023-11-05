@@ -30,8 +30,6 @@ const WasteReport = (selectedBuilding) => {
     let totalWaste = 0;
     let totalRecycled = 0;
 
-    let sumType = category + "Sums";
-
     console.log("Calculating for this category: ", buildingData[category]);
 
     for (const field of Object.values(buildingData[category])) {

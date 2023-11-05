@@ -7,8 +7,7 @@ import AdminPage from "./templates/admin/AdminPage";
 import ReportPage from "./templates/ReportPage";
 import ReportsPage from "./templates/ReportsPage";
 import Map from "./templates/map/Map";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import axios from "axios";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 export default function App() {
   /*
