@@ -84,6 +84,8 @@ const WasteReport = (selectedBuilding) => {
   const buildingnr = selectedBuilding.selectedBuilding;
   const [buildingData, setBuildingData] = useState(null);
 
+  console.log("Waste Report function")
+
   
   useEffect(() => {
     fetch('../../src/assets/mapData1.json')
@@ -91,8 +93,10 @@ const WasteReport = (selectedBuilding) => {
       .then(async data => {
         // Find the building with the matching 'buildingnr'
         const selectedBuildingData = data.find(building => building.buildingnr === buildingnr);
+        console.log("Data: ", selectedBuildingData)
 
         if (selectedBuildingData) {
+          console.log("Inside loop")
           // Extract 'area' and 'stories' values
           const area = selectedBuildingData.area;
           const stories = selectedBuildingData.stories;
@@ -109,15 +113,15 @@ const WasteReport = (selectedBuilding) => {
             withCredentials: true, // Send credentials (cookies) if needed
           });
     
-          const response = await axiosInstance.post("", {
+          const buildingResponse = await axiosInstance.post("", {
             bnr : buildingnr,
             area: area,
             stories: stories,
             building_year: buildingYear,
           });  
           
-          setBuildingData(response);
-          console.log(response);
+          setBuildingData(buildingResponse);
+          console.log(buildingResponse);
         }
       });
   }, [buildingnr]);
@@ -157,8 +161,30 @@ return(
     <TableContainer component={Paper} style={tableStyle}>
       <Table>
         <TableHead>
-          <TableCell>Hello</TableCell>
-        </TableHead>
+          <TableRow>
+            <TableCell colSpan={8} style={tabletitle}>
+                Rapporten gjelder
+            </TableCell>
+          </TableRow>
+          </TableHead>
+          <TableBody>
+            <TableCell style={subHeaderCellStyle} rowSpan={2}>
+              Eiendom/byggested
+            </TableCell>
+            <TableCell style={{ display: "flex", alignItems: "center" }}>
+              {/*
+              {buildingData.map((name, index) => (
+                <TextField
+                  key={index}
+                  label={name}
+                  id={`standard-size-small-${index}`}
+                  defaultValue=""
+                  size="small"
+                  variant="standard"
+                />
+              ))}*/}
+            </TableCell>
+          </TableBody>
       </Table>
     </TableContainer>
   </div>
