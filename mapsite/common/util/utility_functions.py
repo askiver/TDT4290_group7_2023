@@ -105,19 +105,21 @@ def predict_waste_report(data):
     # prepare data
     df = prepare_data_prediction(data)
     # Drop id column before prediction
-    df = df.drop(columns=['osmid'])
+    #df = df.drop(columns=['osmid'])
     # Convert dataframe to DMatrix
-    df = xgb.DMatrix(df)
+    df_xgb = xgb.DMatrix(df.copy())
     # Make prediction
-    prediction = bst.predict(df)
+    prediction = bst.predict(df_xgb)
     # Convert prediction to dataframe
     df_predictions = pd.DataFrame(prediction, columns=get_target_columns())
+    # Concatenate prediction with original dataframe
+    #df_predictions = pd.concat([df, df_predictions], axis=1)
     return df_predictions
 
 
 def prepare_data_prediction(data):
     # create dataframe from list of dictionaries
-    data = pd.DataFrame(data)
+    data = pd.DataFrame(data, index=[0])
 
     # handle features
     data = handle_features(data)

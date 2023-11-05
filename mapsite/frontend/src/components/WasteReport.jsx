@@ -100,6 +100,7 @@ const WasteReport = (selectedBuilding) => {
           // Extract 'area' and 'stories' values
           const area = selectedBuildingData.area;
           const stories = selectedBuildingData.stories;
+          const buildingCode = selectedBuildingData.buildingcode;
 
           // Extract 'building-year' based on the 'date' field, if nothing: set 0
           const date = selectedBuildingData.date;
@@ -114,7 +115,7 @@ const WasteReport = (selectedBuilding) => {
           });
     
           const buildingResponse = await axiosInstance.post("", {
-            bnr : buildingnr,
+            bnr : buildingCode,
             area: area,
             stories: stories,
             building_year: buildingYear,
