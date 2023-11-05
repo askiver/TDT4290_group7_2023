@@ -13,6 +13,51 @@ const WasteReport = (selectedBuilding) => {
   const buildingnr = selectedBuilding.selectedBuilding;
   const [loading, setLoading] = useState(true);
   const [buildingData, setBuildingData] = useState(null);
+  const [ordinaryWasteSums, setOrdinaryWasteSums] = useState({
+    totalAmountTotal: 0,
+    totalWaste: 0,
+    totalRecycled: 0,
+  });
+
+  const [dangerousWasteSums, setDangerousWasteSums] = useState({
+    totalAmountTotal: 0,
+    totalWaste: 0,
+    totalRecycled: 0,
+  });
+
+  const calculateSumWasteValues = (category) => {
+    let totalAmountTotal = 0;
+    let totalWaste = 0;
+    let totalRecycled = 0;
+
+    let sumType = category + "Sums";
+
+    console.log("Calculating for this category: ", buildingData[category]);
+
+    for (const field of Object.values(buildingData[category])) {
+      console.log("Category calculating: ", field);
+      totalAmountTotal += field.amountTotal || 0;
+      totalWaste += field.waste || 0;
+      totalRecycled += field.recycled || 0;
+      console.log(totalAmountTotal, totalWaste, totalRecycled);
+    }
+
+    if (category === "ordinaryWaste") {
+      setOrdinaryWasteSums({
+        totalAmountTotal,
+        totalWaste,
+        totalRecycled,
+      });
+    } else if (category === "dangerousWaste") {
+      setDangerousWasteSums({
+        totalAmountTotal,
+        totalWaste,
+        totalRecycled,
+      });
+    }
+
+    console.log("Updated sums: ", ordinaryWasteSums, dangerousWasteSums);
+  };
 
   useEffect(() => {
     fetch("../../src/assets/mapData1.json")
@@ -56,6 +101,10 @@ const WasteReport = (selectedBuilding) => {
 
   useEffect(() => {
     if (buildingData !== null) {
+      if (loading) {
+        calculateSumWasteValues("ordinaryWaste");
+        calculateSumWasteValues("dangerousWaste");
+      }
       setLoading(false);
       console.log("Stored avfallsprognose: ", buildingData);
       console.log("BuildingData Property: ", buildingData.property);
@@ -69,7 +118,7 @@ const WasteReport = (selectedBuilding) => {
   }
 
   const handlePropertyChange = (category, name, newValue) => {
-    console.log("Storing ", newValue, "in ", name, "as part of ", category)
+    console.log("Storing ", newValue, "in ", name, "as part of ", category);
     setBuildingData((prevData) => ({
       ...prevData,
       [category]: {
@@ -78,15 +127,21 @@ const WasteReport = (selectedBuilding) => {
       },
     }));
 
-    console.log("Updated building data: ", buildingData)
+    console.log("Updated building data: ", buildingData);
   };
 
   const handleWasteChange = (category, subCategory, index, newValue) => {
-    const wasteCategories = ["amountTotal", "waste", "locationWaste", "recycled", "locationRecycle"];
+    const wasteCategories = [
+      "amountTotal",
+      "waste",
+      "locationWaste",
+      "recycled",
+      "locationRecycle",
+    ];
     setBuildingData((prevData) => {
       // Make a copy of the previous state
       const newData = { ...prevData };
-  
+
       // Check if the category and subCategory exist, if not, create them
       if (!newData[category]) {
         newData[category] = {};
@@ -94,16 +149,18 @@ const WasteReport = (selectedBuilding) => {
       if (!newData[category][subCategory]) {
         newData[category][subCategory] = {};
       }
-  
+
       // Update the specific field with the new value
       newData[category][subCategory][wasteCategories[index]] = newValue;
-  
+
+      console.log("The category: ", category);
+      calculateSumWasteValues(category);
+
       return newData;
     });
 
-    console.log("Updated waste: ", buildingData)
+    console.log("Updated waste: ", buildingData);
   };
-  
 
   return (
     <div>
@@ -133,7 +190,9 @@ const WasteReport = (selectedBuilding) => {
                         defaultValue={value !== 0 ? value : null}
                         size="small"
                         variant="standard"
-                        onChange={(e) => handlePropertyChange('property', name, e.target.value)}
+                        onChange={(e) =>
+                          handlePropertyChange("property", name, e.target.value)
+                        }
                       />
                     </div>
                   )
@@ -226,12 +285,20 @@ const WasteReport = (selectedBuilding) => {
                         defaultValue={value}
                         size="small"
                         variant="standard"
-                        onChange={(e) => handleWasteChange('ordinaryWaste', name, index, e.target.value)}
-
+                        onChange={(e) =>
+                          handleWasteChange(
+                            "ordinaryWaste",
+                            name,
+                            index,
+                            e.target.value
+                          )
+                        }
                       />
                     </TableCell>
                   ))}
-                  <TableCell style={centerCellStyle}>{parseFloat(values.waste)+ parseFloat(values.recycled)}</TableCell>
+                  <TableCell style={centerCellStyle}>
+                    {parseFloat(values.waste) + parseFloat(values.recycled)}
+                  </TableCell>
                 </TableRow>
               )
             )}
@@ -239,9 +306,20 @@ const WasteReport = (selectedBuilding) => {
               <TableCell style={subHeaderCellStyle}>
                 Sum sortert ordinært avfall
               </TableCell>
-              {Array.from({ length: 6 }, (_, index) => (
-                <TableCell key={index} style={cellStyle} />
+              {[
+                ordinaryWasteSums.totalAmountTotal,
+                ordinaryWasteSums.totalWaste,
+                "",
+                ordinaryWasteSums.totalRecycled,
+                "",
+              ].map((value, index) => (
+                <TableCell style={centerCellStyle} key={index}>
+                  {value}
+                </TableCell>
               ))}
+              <TableCell style={centerCellStyle}>
+                    {parseFloat(ordinaryWasteSums.totalWaste) + parseFloat(ordinaryWasteSums.totalRecycled)}
+              </TableCell>
             </TableRow>
 
             {/*DANGEROUS WASTE */}
@@ -271,12 +349,20 @@ const WasteReport = (selectedBuilding) => {
                         defaultValue={value}
                         size="small"
                         variant="standard"
-                        onChange={(e) => handleWasteChange('dangerousWaste', name, value, e.target.value)}
+                        onChange={(e) =>
+                          handleWasteChange(
+                            "dangerousWaste",
+                            name,
+                            value,
+                            e.target.value
+                          )
+                        }
                       />
                     </TableCell>
                   ))}
-                  <TableCell style={centerCellStyle}>{parseFloat(values.waste)+ parseFloat(values.recycled)}</TableCell>
-
+                  <TableCell style={centerCellStyle}>
+                    {parseFloat(values.waste) + parseFloat(values.recycled)}
+                  </TableCell>
                 </TableRow>
               )
             )}
@@ -285,15 +371,33 @@ const WasteReport = (selectedBuilding) => {
               <TableCell style={subHeaderCellStyle}>
                 Sum sortert farlig avfall
               </TableCell>
-              {Array.from({ length: 6 }, (_, index) => (
-                <TableCell key={index} style={cellStyle} />
+              {[
+                dangerousWasteSums.totalAmountTotal,
+                dangerousWasteSums.totalWaste,
+                "",
+                dangerousWasteSums.totalRecycled,
+                "",
+              ].map((value, index) => (
+                <TableCell style={centerCellStyle} key={index}>
+                  {value}
+                </TableCell>
               ))}
+              <TableCell style={centerCellStyle}>
+                    {parseFloat(dangerousWasteSums.totalWaste) + parseFloat(dangerousWasteSums.totalRecycled)}
+              </TableCell>
             </TableRow>
             <TableRow>
               <TableCell style={subHeaderCellStyle}>Sum avfall i alt</TableCell>
-              {Array.from({ length: 6 }, (_, index) => (
-                <TableCell key={index} style={cellStyle} />
+              {[
+                "totalAmountTotal", "totalWaste", "", "totalRecycled", "",
+              ].map((value, index) => (
+                <TableCell key={index} style={cellStyle}>
+                  {value === "" ? "" : (parseFloat(ordinaryWasteSums[value]) + parseFloat(dangerousWasteSums[value]))}
+                </TableCell>
               ))}
+              <TableCell style={centerCellStyle}>
+                {parseFloat(ordinaryWasteSums.totalWaste) + parseFloat(ordinaryWasteSums.totalRecycled) +parseFloat(dangerousWasteSums.totalWaste) + parseFloat(dangerousWasteSums.totalRecycled)}
+              </TableCell>
             </TableRow>
             <TableRow>
               <TableCell style={subHeaderCellStyle}>Sorteringsgrad</TableCell>
@@ -318,9 +422,8 @@ const WasteReport = (selectedBuilding) => {
 
 export default WasteReport;
 
-
 const tableStyle = {
-  maxWidth: "80%",
+  maxWidth: "90%",
   margin: "50px",
 };
 
