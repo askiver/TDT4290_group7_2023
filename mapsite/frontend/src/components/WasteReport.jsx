@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
@@ -7,6 +7,7 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import TextField from "@mui/material/TextField";
 import Paper from "@mui/material/Paper";
+import axios from "axios";
 
 const tableStyle = {
   maxWidth: "80%",
@@ -44,6 +45,7 @@ const centerCellStyle = {
   border: "1px solid #ddd",
 };
 
+/*
 // Rows that represent the rows of the ordinary waste from the waste report
 const ordinaryRows = [
   "Trevirke (ikke kreosot- og CCA-impregnert)",
@@ -62,8 +64,9 @@ const ordinaryRows = [
 const dangerousRows = [
   '7051-55 Maling, lim, lakk, fugemasser, spraybokser, m.m (også "tomme" fugemasse-patroner)',
   "Annet (fyll inn under)",
-];
+];*/
 
+/*
 const reportInfo = [
   "Gnr.",
   "Bnr.",
@@ -74,9 +77,53 @@ const reportInfo = [
   "Kommune",
 ];
 
-const addressInfo = ["Adresse", "Postnr.", "Poststed"];
+const addressInfo = ["Adresse", "Postnr.", "Poststed"];*/
 
-const WasteReport = () => {
+const WasteReport = (selectedBuilding) => {
+
+  const buildingnr = selectedBuilding.selectedBuilding;
+  const [buildingData, setBuildingData] = useState(null);
+
+  
+  useEffect(() => {
+    fetch('../../src/assets/mapData1.json')
+      .then(response => response.json())
+      .then(async data => {
+        // Find the building with the matching 'buildingnr'
+        const selectedBuildingData = data.find(building => building.buildingnr === buildingnr);
+
+        if (selectedBuildingData) {
+          // Extract 'area' and 'stories' values
+          const area = selectedBuildingData.area;
+          const stories = selectedBuildingData.stories;
+
+          // Extract 'building-year' based on the 'date' field, if nothing: set 0
+          const date = selectedBuildingData.date;
+          const buildingYear = date ? parseInt(date.split('-')[0]) : 0;
+
+          // Set the building data in the component state
+          // setBuildingData({ area, stories, buildingYear });
+
+          const axiosInstance = axios.create({
+            baseURL: "http://127.0.0.1:8000/api/generate_waste_report/",
+            withCredentials: true, // Send credentials (cookies) if needed
+          });
+    
+          const response = await axiosInstance.post("", {
+            bnr : buildingnr,
+            area: area,
+            stories: stories,
+            building_year: buildingYear,
+          });  
+          
+          setBuildingData(response);
+          console.log(response);
+        }
+      });
+  }, [buildingnr]);
+
+
+  /*
   const initialData = Array.from({ length: 10 }, () => Array(7).fill(""));
   const initialDangerousData = Array.from({ length: 5 }, () =>
     Array(7).fill("")
@@ -102,7 +149,23 @@ const WasteReport = () => {
 
     setDangerousData(updatedData);
   };
+  */
 
+
+return(
+  <div>
+    <TableContainer component={Paper} style={tableStyle}>
+      <Table>
+        <TableHead>
+          <TableCell>Hello</TableCell>
+        </TableHead>
+      </Table>
+    </TableContainer>
+  </div>
+  )
+};
+
+  /*
   return (
     <div>
       <TableContainer component={Paper} style={tableStyle}>
@@ -115,7 +178,7 @@ const WasteReport = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {/*TODO: Handle changes to address. How and where do we store this information?*/}
+            {/*TODO: Handle changes to address. How and where do we store this information?/}
             <TableCell style={subHeaderCellStyle} rowSpan={2}>
               Eiendom/byggested
             </TableCell>
@@ -128,10 +191,6 @@ const WasteReport = () => {
                   defaultValue=""
                   size="small"
                   variant="standard"
-                  onChange={(event) =>
-                    // TODO: Create separate helper function or adapt function, bc there is no row here
-                    handleCellChange(event, rowIndex, columnIndex)
-                  }
                 />
               ))}
             </TableCell>
@@ -145,9 +204,6 @@ const WasteReport = () => {
                     defaultValue=""
                     size="small"
                     variant="standard"
-                    onChange={(event) =>
-                      handleCellChange(event, rowIndex, columnIndex)
-                    }
                   />
                 ))}
               </TableCell>
@@ -251,7 +307,7 @@ const WasteReport = () => {
               <TableCell style={subHeaderCellStyle}>
                 Sum sortert ordinært avfall
               </TableCell>
-              {/*TODO: Add functionality to sum the ordinary waste*/}
+              {/*TODO: Add functionality to sum the ordinary waste/}
             </TableRow>
             <TableRow>
               <TableCell style={centerCellStyle}>
@@ -299,7 +355,7 @@ const WasteReport = () => {
               <TableCell style={subHeaderCellStyle}>
                 Sum sortert farlig avfall
               </TableCell>
-              {/*TODO: Add functionality to sum the dangerous waste*/}
+              {/*TODO: Add functionality to sum the dangerous waste/}
             </TableRow>
             <TableRow>
               <TableCell style={subHeaderCellStyle}>
@@ -308,7 +364,7 @@ const WasteReport = () => {
             </TableRow>
             <TableRow>
               <TableCell style={subHeaderCellStyle}>Sum avfall i alt</TableCell>
-              {/*TODO: Add functionality to sum the total waste*/}
+              {/*TODO: Add functionality to sum the total waste/}
             </TableRow>
             <TableRow>
               <TableCell style={subHeaderCellStyle}>Sorteringsgrad</TableCell>
@@ -323,6 +379,6 @@ const WasteReport = () => {
       </TableContainer>
     </div>
   );
-};
+};*/
 
 export default WasteReport;
