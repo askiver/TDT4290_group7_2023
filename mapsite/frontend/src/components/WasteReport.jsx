@@ -122,7 +122,7 @@ const WasteReport = (selectedBuilding) => {
           });  
           
           setBuildingData(buildingResponse);
-          console.log(buildingResponse);
+          console.log("Avfallsprognose: ", buildingResponse);
         }
       });
   }, [buildingnr]);
