@@ -158,11 +158,9 @@ function LocationMarker({ selectedBuilding, onPopupClose }) {
           <h3>Bygningsinformasjon</h3>
           <p>OSM ID: {selectedBuilding.osmid}</p>
           <p>Bygningsnummer: {selectedBuilding.buildingnr}</p>
-          <div>
-          <a href="/report" style={{ textDecoration: 'underline', color: 'blue' }}>
-            Generer avfallsprognose
-          </a>
-        </div>
+          <button onClick={() => navigate(`/report/${selectedBuilding.buildingnr}`)}>
+            Se avfallsprognose
+          </button>
         </div>
       </Popup>
       {/*<Popup>You are here</Popup>*/}
