@@ -9,94 +9,23 @@ import TextField from "@mui/material/TextField";
 import Paper from "@mui/material/Paper";
 import axios from "axios";
 
-const tableStyle = {
-  maxWidth: "80%",
-  margin: "50px",
-};
-
-const cellStyle = {
-  border: "1px solid #ddd",
-};
-
-const boldText = {
-  fontWeight: "bold",
-};
-
-const tabletitle = {
-  backgroundColor: "#d0d0d0",
-  fontWeight: "bold",
-  border: "1px solid #ddd",
-};
-
-const headerCellStyle = {
-  backgroundColor: "#f0f0f0",
-  fontWeight: "bold",
-  border: "1px solid #ddd",
-  textAlign: "center",
-};
-
-const subHeaderCellStyle = {
-  backgroundColor: "#f5f5f5",
-};
-
-const centerCellStyle = {
-  backgroundColor: "#f5f5f5",
-  textAlign: "center",
-  border: "1px solid #ddd",
-};
-
-/*
-// Rows that represent the rows of the ordinary waste from the waste report
-const ordinaryRows = [
-  "Trevirke (ikke kreosot- og CCA-impregnert)",
-  "Papir, papp og kartong",
-  "Glass",
-  "Jern og andre metaller",
-  "Gipsbaserte materialer",
-  "Plast",
-  "Betong, tegl, lett klinker og lignende",
-  "Forurenset betong og tegn (under grensen for farlig avfall)",
-  "EE-avfall (elektriske og elektroniske produkter)",
-  "Annet (fyll inn under)",
-];
-
-// Rows that represent the rows of the dangerous waste from the waste report
-const dangerousRows = [
-  '7051-55 Maling, lim, lakk, fugemasser, spraybokser, m.m (også "tomme" fugemasse-patroner)',
-  "Annet (fyll inn under)",
-];*/
-
-/*
-const reportInfo = [
-  "Gnr.",
-  "Bnr.",
-  "Festenr.",
-  "Seksjonsnr.",
-  "Bygningsnr.",
-  "Bolignr.",
-  "Kommune",
-];
-
-const addressInfo = ["Adresse", "Postnr.", "Poststed"];*/
-
 const WasteReport = (selectedBuilding) => {
-
   const buildingnr = selectedBuilding.selectedBuilding;
+  const [loading, setLoading] = useState(true);
   const [buildingData, setBuildingData] = useState(null);
 
-  console.log("Waste Report function")
-
-  
   useEffect(() => {
-    fetch('../../src/assets/mapData1.json')
-      .then(response => response.json())
-      .then(async data => {
+    fetch("../../src/assets/mapData1.json")
+      .then((response) => response.json())
+      .then(async (data) => {
         // Find the building with the matching 'buildingnr'
-        const selectedBuildingData = data.find(building => building.buildingnr === buildingnr);
-        console.log("Data: ", selectedBuildingData)
+        const selectedBuildingData = data.find(
+          (building) => building.buildingnr === buildingnr
+        );
+        console.log("Data: ", selectedBuildingData);
 
         if (selectedBuildingData) {
-          console.log("Inside loop")
+          console.log("Inside loop");
           // Extract 'area' and 'stories' values
           const area = selectedBuildingData.area;
           const stories = selectedBuildingData.stories;
@@ -104,95 +33,78 @@ const WasteReport = (selectedBuilding) => {
 
           // Extract 'building-year' based on the 'date' field, if nothing: set 0
           const date = selectedBuildingData.date;
-          const buildingYear = date ? parseInt(date.split('-')[0]) : 0;
-
-          // Set the building data in the component state
-          // setBuildingData({ area, stories, buildingYear });
+          const buildingYear = date ? parseInt(date.split("-")[0]) : 0;
 
           const axiosInstance = axios.create({
             baseURL: "http://127.0.0.1:8000/api/generate_waste_report/",
             withCredentials: true, // Send credentials (cookies) if needed
           });
-    
+
           const buildingResponse = await axiosInstance.post("", {
-            bnr : buildingCode,
+            bnr: buildingCode,
             area: area,
             stories: stories,
             building_year: buildingYear,
-          });  
-          
-          setBuildingData(buildingResponse);
-          console.log("Avfallsprognose: ", buildingResponse);
+          });
+
+          setBuildingData(buildingResponse.data);
+          console.log("Avfallsprognose: ", buildingResponse.data);
+          console.log("Property: ", buildingResponse.data.property);
         }
       });
   }, [buildingnr]);
 
+  useEffect(() => {
+    if (buildingData !== null) {
+      setLoading(false);
+      console.log("Stored avfallsprognose: ", buildingData);
+      console.log("BuildingData Property: ", buildingData.property);
+      console.log("Ordinary waste: ", buildingData.ordinaryWaste);
+    }
+  }, [buildingData]);
 
-  /*
-  const initialData = Array.from({ length: 10 }, () => Array(7).fill(""));
-  const initialDangerousData = Array.from({ length: 5 }, () =>
-    Array(7).fill("")
-  );
+  if (loading) {
+    // Render a loading indicator or message while data is being fetched.
+    return <div>Loading...</div>;
+  }
 
-  const [reportData, setReportData] = useState(initialData);
-  const [dangerousData, setDangerousData] = useState(initialDangerousData);
+  const handlePropertyChange = (category, name, newValue) => {
+    console.log("Storing ", newValue, "in ", name, "as part of ", category)
+    setBuildingData((prevData) => ({
+      ...prevData,
+      [category]: {
+        ...prevData[category],
+        [name]: newValue,
+      },
+    }));
 
-  const handleCellChange = (event, rowIndex, columnIndex) => {
-    const newValue = event.target.value;
-    const updatedData = [...reportData];
-
-    updatedData[rowIndex][columnIndex] = newValue;
-
-    setReportData(updatedData);
+    console.log("Updated building data: ", buildingData)
   };
 
-  const handleDangerousCellChange = (event, rowIndex, columnIndex) => {
-    const newValue = event.target.value;
-    const updatedData = [...dangerousData];
+  const handleWasteChange = (category, subCategory, index, newValue) => {
+    const wasteCategories = ["amountTotal", "waste", "locationWaste", "recycled", "locationRecycle"];
+    setBuildingData((prevData) => {
+      // Make a copy of the previous state
+      const newData = { ...prevData };
+  
+      // Check if the category and subCategory exist, if not, create them
+      if (!newData[category]) {
+        newData[category] = {};
+      }
+      if (!newData[category][subCategory]) {
+        newData[category][subCategory] = {};
+      }
+  
+      // Update the specific field with the new value
+      newData[category][subCategory][wasteCategories[index]] = newValue;
+  
+      return newData;
+    });
 
-    updatedData[rowIndex][columnIndex] = newValue;
-
-    setDangerousData(updatedData);
+    console.log("Updated waste: ", buildingData)
   };
-  */
+  
 
-
-return(
-  <div>
-    <TableContainer component={Paper} style={tableStyle}>
-      <Table>
-        <TableHead>
-          <TableRow>
-            <TableCell colSpan={8} style={tabletitle}>
-                Rapporten gjelder
-            </TableCell>
-          </TableRow>
-          </TableHead>
-          <TableBody>
-            <TableCell style={subHeaderCellStyle} rowSpan={2}>
-              Eiendom/byggested
-            </TableCell>
-            <TableCell style={{ display: "flex", alignItems: "center" }}>
-              {/*
-              {buildingData.map((name, index) => (
-                <TextField
-                  key={index}
-                  label={name}
-                  id={`standard-size-small-${index}`}
-                  defaultValue=""
-                  size="small"
-                  variant="standard"
-                />
-              ))}*/}
-            </TableCell>
-          </TableBody>
-      </Table>
-    </TableContainer>
-  </div>
-  )
-};
-
-  /*
   return (
     <div>
       <TableContainer component={Paper} style={tableStyle}>
@@ -205,36 +117,29 @@ return(
             </TableRow>
           </TableHead>
           <TableBody>
-            {/*TODO: Handle changes to address. How and where do we store this information?/}
             <TableCell style={subHeaderCellStyle} rowSpan={2}>
               Eiendom/byggested
             </TableCell>
             <TableCell style={{ display: "flex", alignItems: "center" }}>
-              {reportInfo.map((name, index) => (
-                <TextField
-                  key={index}
-                  label={name}
-                  id={`standard-size-small-${index}`}
-                  defaultValue=""
-                  size="small"
-                  variant="standard"
-                />
-              ))}
+              <div
+                style={{ display: "flex", flexWrap: "wrap", minWidth: "200px" }}
+              >
+                {Object.entries(buildingData.property).map(
+                  ([name, value], index) => (
+                    <div key={index} style={{ margin: "5px" }}>
+                      <TextField
+                        label={name}
+                        id={`standard-size-small-${index}`}
+                        defaultValue={value}
+                        size="small"
+                        variant="standard"
+                        onChange={(e) => handlePropertyChange('property', name, e.target.value)}
+                      />
+                    </div>
+                  )
+                )}
+              </div>
             </TableCell>
-            <TableRow>
-              <TableCell colSpan={7}>
-                {addressInfo.map((name, index) => (
-                  <TextField
-                    key={index}
-                    label={name}
-                    id={`standard-size-small-${index}`}
-                    defaultValue=""
-                    size="small"
-                    variant="standard"
-                  />
-                ))}
-              </TableCell>
-            </TableRow>
           </TableBody>
         </Table>
       </TableContainer>
@@ -290,6 +195,8 @@ return(
                 </TableCell>
               ))}
             </TableRow>
+
+            {/*ORDINARY WASTE */}
             <TableRow>
               <TableCell style={centerCellStyle}>
                 <span style={boldText}>Ordinært avfall</span>
@@ -300,42 +207,44 @@ return(
                 <TableCell key={index} style={centerCellStyle} />
               ))}
             </TableRow>
-            </TableHead>
+          </TableHead>
           <TableBody>
-            {reportData.map((row, rowIndex) => (
-              <TableRow key={rowIndex}>
-                {row.map((cell, columnIndex) => (
-                  <TableCell
-                    key={columnIndex}
-                    style={columnIndex === 0 ? subHeaderCellStyle : cellStyle}
-                  >
-                    {columnIndex === 0 ? (
-                      <div style={subHeaderCellStyle}>
-                        {ordinaryRows[rowIndex]}
-                      </div>
-                    ) : (
+            {/*TODO: If we add locations to the information, this needs to be considered. */}
+            {Object.entries(buildingData.ordinaryWaste).map(
+              ([name, values], index) => (
+                <TableRow key={index}>
+                  <TableCell style={centerCellStyle}>{name}</TableCell>
+                  {[
+                    values.amountTotal,
+                    values.waste,
+                    "",
+                    values.recycled,
+                    "",
+                    "",
+                  ].map((value, index) => (
+                    <TableCell style={cellStyle} key={index}>
                       <TextField
-                        value={cell}
-                        onChange={(event) =>
-                          handleCellChange(event, rowIndex, columnIndex)
-                        }
-                        fullWidth
+                        defaultValue={value}
+                        size="small"
                         variant="standard"
-                        InputProps={{
-                          readOnly: columnIndex === 0,
-                        }}
+                        onChange={(e) => handleWasteChange('ordinaryWaste', name, index, e.target.value)}
+
                       />
-                    )}
-                  </TableCell>
-                ))}
-              </TableRow>
-            ))}
+                    </TableCell>
+                  ))}
+                </TableRow>
+              )
+            )}
             <TableRow>
               <TableCell style={subHeaderCellStyle}>
                 Sum sortert ordinært avfall
               </TableCell>
-              {/*TODO: Add functionality to sum the ordinary waste/}
+              {Array.from({ length: 6 }, (_, index) => (
+                <TableCell key={index} style={cellStyle} />
+              ))}
             </TableRow>
+
+            {/*DANGEROUS WASTE */}
             <TableRow>
               <TableCell style={centerCellStyle}>
                 <span style={boldText}>Farlig avfall</span>
@@ -346,66 +255,101 @@ return(
                 <TableCell key={index} style={centerCellStyle} />
               ))}
             </TableRow>
-            {dangerousData.map((row, rowIndex) => (
-              <TableRow key={rowIndex}>
-                {row.map((cell, columnIndex) => (
-                  <TableCell
-                    key={columnIndex}
-                    style={columnIndex === 0 ? subHeaderCellStyle : cellStyle}
-                  >
-                    {columnIndex === 0 ? (
-                      <div style={subHeaderCellStyle}>
-                        {dangerousRows[rowIndex]}
-                      </div>
-                    ) : (
+            {Object.entries(buildingData.dangerousWaste).map(
+              ([name, values], index) => (
+                <TableRow key={index}>
+                  <TableCell style={centerCellStyle}>{name}</TableCell>
+                  {[
+                    values.amountTotal,
+                    values.waste,
+                    "",
+                    values.recycled,
+                    "",
+                    "",
+                  ].map((value, index) => (
+                    <TableCell style={cellStyle} key={index}>
                       <TextField
-                        value={cell}
-                        onChange={(event) =>
-                          handleDangerousCellChange(
-                            event,
-                            rowIndex,
-                            columnIndex
-                          )
-                        }
-                        fullWidth
+                        defaultValue={value}
+                        size="small"
                         variant="standard"
-                        InputProps={{
-                          readOnly: columnIndex === 0,
-                        }}
+                        onChange={(e) => handleWasteChange('dangerousWaste', name, value, e.target.value)}
                       />
-                    )}
-                  </TableCell>
-                ))}
-              </TableRow>
-            ))}
+                    </TableCell>
+                  ))}
+                </TableRow>
+              )
+            )}
+
             <TableRow>
               <TableCell style={subHeaderCellStyle}>
                 Sum sortert farlig avfall
               </TableCell>
-              {/*TODO: Add functionality to sum the dangerous waste/}
-            </TableRow>
-            <TableRow>
-              <TableCell style={subHeaderCellStyle}>
-                Blandet avfall / restavfall
-              </TableCell>
+              {Array.from({ length: 6 }, (_, index) => (
+                <TableCell key={index} style={cellStyle} />
+              ))}
             </TableRow>
             <TableRow>
               <TableCell style={subHeaderCellStyle}>Sum avfall i alt</TableCell>
-              {/*TODO: Add functionality to sum the total waste/}
+              {Array.from({ length: 6 }, (_, index) => (
+                <TableCell key={index} style={cellStyle} />
+              ))}
             </TableRow>
             <TableRow>
               <TableCell style={subHeaderCellStyle}>Sorteringsgrad</TableCell>
+              {Array.from({ length: 6 }, (_, index) => (
+                <TableCell key={index} style={cellStyle} />
+              ))}
             </TableRow>
             <TableRow>
               <TableCell style={subHeaderCellStyle}>
                 Avfall/areal (kg/m2)
               </TableCell>
+              {Array.from({ length: 6 }, (_, index) => (
+                <TableCell key={index} style={cellStyle} />
+              ))}
             </TableRow>
           </TableBody>
         </Table>
       </TableContainer>
     </div>
   );
-};*/
+};
 
 export default WasteReport;
+
+
+const tableStyle = {
+  maxWidth: "80%",
+  margin: "50px",
+};
+
+const cellStyle = {
+  border: "1px solid #ddd",
+};
+
+const boldText = {
+  fontWeight: "bold",
+};
+
+const tabletitle = {
+  backgroundColor: "#d0d0d0",
+  fontWeight: "bold",
+  border: "1px solid #ddd",
+};
+
+const headerCellStyle = {
+  backgroundColor: "#f0f0f0",
+  fontWeight: "bold",
+  border: "1px solid #ddd",
+  textAlign: "center",
+};
+
+const subHeaderCellStyle = {
+  backgroundColor: "#f5f5f5",
+};
+
+const centerCellStyle = {
+  backgroundColor: "#f5f5f5",
+  textAlign: "center",
+  border: "1px solid #ddd",
+};
