@@ -158,7 +158,7 @@ def submit_waste_report(request):
 def generate_waste_report(request):
     # Get features from request body
     request_data = json.loads(request.body.decode("utf-8"))
-    material_df = predict_waste_report(request_data)
+    material_df = predict_waste_report([request_data])
     # Load Json file of waste report template
     generated_waste_report = json.load(open("common/util/waste_report_template.json"))
     pd.set_option('display.max_columns', None)
@@ -167,9 +167,12 @@ def generate_waste_report(request):
     generated_waste_report['property']['area'] = request_data['area']
     generated_waste_report['property']['stories'] = request_data['stories']
     generated_waste_report['property']['building_year'] = request_data['building_year']
+    material_df = material_df.astype(float)
     # Add material data to waste report
     for col in material_df.columns:
         material_value = material_df[col].values[0]
+        # Round to 2 decimals
+        material_value = round(material_value, 2)
         waste_type = col.split('_')[0]
         material_type = col.split('_')[1]
         waste_or_recycled = col.split('_')[2]
