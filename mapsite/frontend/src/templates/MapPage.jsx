@@ -6,8 +6,26 @@ import "../templates/MapPage.css"
 
 function MapPage() {
   const [filter, setFilter] = useState({});
-  const [checked, setChecked] = useState([]);
-
+  const [checked, setChecked] = useState([
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    true,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+  ]);
 
   useEffect(() => {
     const values = Object.values(filter);
@@ -21,7 +39,9 @@ function MapPage() {
       }
     });
 
-    setChecked(checkedArray);
+    if(values.length != 0) {
+      setChecked(checkedArray);
+    }
   }, [filter])
 
   return(
