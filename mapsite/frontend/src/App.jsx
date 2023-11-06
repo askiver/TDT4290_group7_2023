@@ -6,7 +6,7 @@ import Navbar from "./components/Navbar";
 import AdminPage from "./templates/admin/AdminPage";
 import ReportPage from "./templates/ReportPage";
 import ReportsPage from "./templates/ReportsPage";
-import Map from "./templates/map/Map";
+import MapPage from "./templates/MapPage";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 export default function App() {
@@ -43,7 +43,7 @@ export default function App() {
           <Route path="/report" element={<ReportsPage />}/>
           <Route path="/report/:selectedBuilding" element={<ReportPage/>}/>
 
-          <Route path="/map" element={<Map />} />
+          <Route path="/map" element={<MapPage />} />
 
           {/*
             // How to route with authentication

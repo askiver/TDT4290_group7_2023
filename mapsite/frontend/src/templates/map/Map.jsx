@@ -30,7 +30,7 @@ export default function Map(props) {
     useEffect(() => {
         const map = mapRef.current;
         //Redo fetch the right way
-        fetch("src/assets/mapData1.json")
+        fetch("src/assets/testmapData.json")
             .then((res) => res.json())
             .then((data) => setData(data))
             .finally(setLoading(false))

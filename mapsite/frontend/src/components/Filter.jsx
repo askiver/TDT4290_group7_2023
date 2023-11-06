@@ -105,24 +105,6 @@ export default function Filter(props) {
                 <div className="filterContainer_materialFilter">
                     <h3 className="filterContainer_filterTypeText"> Material Filter </h3>
                     <hr className="filterContainer_filterTypeDivide"/>
-                    {/* <FilterButton 
-                        name={"materialfilter1"}
-                        value={"steel"}
-                        displayName={"Stål"}
-                        checked={props.checked[8]}
-                        />
-                    <FilterButton 
-                        name={"materialfilter2"}
-                        value={"wood"}
-                        displayName={"Trevirke"}
-                        checked={props.checked[9]}
-                        />
-                    <FilterButton 
-                        name={"materialfilter3"}
-                        value={"concrete"}
-                        displayName={"Betong"}
-                        checked={props.checked[10]}
-                        /> */}
                     <MaterialSelectionFilter
                         checked={props.checked.slice(8)}
                     />
