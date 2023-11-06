@@ -58,7 +58,7 @@ const WasteReport = (selectedBuilding) => {
   };
 
   useEffect(() => {
-    fetch("../../src/assets/mapData1.json")
+    fetch("../../src/assets/testmapData.json")
       .then((response) => response.json())
       .then(async (data) => {
         // Find the building with the matching 'buildingnr'
