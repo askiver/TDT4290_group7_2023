@@ -134,6 +134,7 @@ export default function Map(props) {
               onPopupClose={handlePopupClose}
             />
           )}
+          {console.log("Selected building: ", selectedBuilding)}
             </MapContainer>}
         </>
     )
@@ -156,23 +157,20 @@ function LocationMarker({ selectedBuilding, onPopupClose }) {
 
     const navigate = useNavigate();
 
-    return position === null ? null : (
-        <Marker position={position}>
-        <Popup onClose={onPopupClose}>
-            {/* Display building information in the popup */}
-            <div>
-            <h3>Bygningsinformasjon</h3>
-            <p>OSM ID: {selectedBuilding.osmid}</p>
-            <p>Bygningsnummer: {selectedBuilding.buildingnr}</p>
-            <div>
-            <a href="/report" style={{ textDecoration: 'underline', color: 'blue' }}>
-                Generer avfallsprognose
-            </a>
-            </div>
-            </div>
-        </Popup>
-        {/*<Popup>You are here</Popup>*/}
-        </Marker>
-    );
+  return position === null ? null : (
+    <Marker position={position}>
+      <Popup onClose={onPopupClose}>
+        {/* Display building information in the popup */}
+        <div>
+          <h3>Bygningsinformasjon</h3>
+          <p>OSM ID: {selectedBuilding.osmid}</p>
+          <p>Bygningsnummer: {selectedBuilding.buildingnr}</p>
+          <button onClick={() => navigate(`/report/${selectedBuilding.buildingnr}`)}>
+            Se avfallsprognose
+          </button>
+        </div>
+      </Popup>
+      {/*<Popup>You are here</Popup>*/}
+    </Marker>
+  );
 }
-

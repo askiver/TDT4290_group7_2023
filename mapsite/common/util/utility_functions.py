@@ -5,6 +5,7 @@ import numpy as np
 import pandas as pd
 import xgboost as xgb
 from sklearn.preprocessing import OneHotEncoder
+from decimal import Decimal, getcontext
 
 
 def get_target_columns():
@@ -104,12 +105,10 @@ def predict_waste_report(data):
     bst.load_model('common/util/model.json')
     # prepare data
     df = prepare_data_prediction(data)
-    # Drop id column before prediction
-    df = df.drop(columns=['osmid'])
     # Convert dataframe to DMatrix
-    df = xgb.DMatrix(df)
+    df_xgb = xgb.DMatrix(df.copy())
     # Make prediction
-    prediction = bst.predict(df)
+    prediction = bst.predict(df_xgb)
     # Convert prediction to dataframe
     df_predictions = pd.DataFrame(prediction, columns=get_target_columns())
     return df_predictions
@@ -135,8 +134,6 @@ def prepare_data_waste_report(data_list):
     df = pd.concat(dfs, ignore_index=True)
     # Rename columns for consistency
     df.columns = (df.columns.str.replace('property.', '', regex=False)
-                  #.str.replace('dangerousWaste.', '', regex=False)
-                  #.str.replace('ordinaryWaste.', '', regex=False)
                   .str.replace('.', '_', regex=False))
 
     # Only keep relevant columns
@@ -191,7 +188,6 @@ def save_predicted_material_usage():
                 year = int(parsed_date.year)
 
             building = {
-                'osmid': entry['osmid'],
                 'bnr': entry['buildingcode'],
                 # Transform building year into int
                 'area': entry['area'],

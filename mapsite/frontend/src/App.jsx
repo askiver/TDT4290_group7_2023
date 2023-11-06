@@ -5,9 +5,9 @@ import UserPage from "./templates/UserPage";
 import Navbar from "./components/Navbar";
 import AdminPage from "./templates/admin/AdminPage";
 import ReportPage from "./templates/ReportPage";
-import MapPage from "./templates/MapPage";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import axios from "axios";
+import ReportsPage from "./templates/ReportsPage";
+import Map from "./templates/map/Map";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 export default function App() {
   /*
@@ -40,8 +40,10 @@ export default function App() {
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/user" element={<UserPage />} />
           <Route path="/admin" element={<AdminPage />} />
-          <Route path="/report" element={<ReportPage />} />
-          <Route path="/map" element={<MapPage />} />
+          <Route path="/report" element={<ReportsPage />}/>
+          <Route path="/report/:selectedBuilding" element={<ReportPage/>}/>
+
+          <Route path="/map" element={<Map />} />
 
           {/*
             // How to route with authentication
