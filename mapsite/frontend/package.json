@@ -17,7 +17,7 @@
     "@mui/icons-material": "^5.14.11",
     "@mui/material": "^5.14.11",
     "axios": "^0.24.0",
-    "esbuild": "^0.19.4",
+    "esbuild": "^0.19.5",
     "leaflet": "^1.9.4",
     "leaflet-geosearch": "^3.9.0",
     "localforage": "^1.10.0",

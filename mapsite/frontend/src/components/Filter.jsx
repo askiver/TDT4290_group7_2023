@@ -1,4 +1,5 @@
 import FilterButton from "./FilterButton"
+import MaterialSelectionFilter from "./MaterialSelectionFilter";
 import { useState } from "react";
 import { ReactPropTypes } from "react";
 import "../components/Filter.css"
@@ -19,7 +20,7 @@ export default function Filter(props) {
                 buildingFilterArray.push(document.getElementById(`buildingfilter${i}`));
             }
     
-            for (let i = 1; i < 4; i++) {
+            for (let i = 1; i < 11; i++) {
                 materialFilterArray.push(document.getElementById(`materialfilter${i}`));
             }
     
@@ -31,14 +32,13 @@ export default function Filter(props) {
                 }
             }
 
-            for (let i = 0; i < 3; i++) {
+            for (let i = 0; i < 10; i++) {
                 if(materialFilterArray[i].checked) {
-                    filter[materialFilterArray[i].getAttribute('name')] = materialFilterArray[i].getAttribute('value');
+                    filter[materialFilterArray[i].getAttribute('value')] = materialFilterArray[i].getAttribute('value');
                 } else {
-                    filter[materialFilterArray[i].getAttribute('name')] = "";
+                    filter[materialFilterArray[i].getAttribute('value')] = "";
                 }
             }
-
 
             props.extractFilter(filter);
         }
@@ -105,7 +105,7 @@ export default function Filter(props) {
                 <div className="filterContainer_materialFilter">
                     <h3 className="filterContainer_filterTypeText"> Material Filter </h3>
                     <hr className="filterContainer_filterTypeDivide"/>
-                    <FilterButton 
+                    {/* <FilterButton 
                         name={"materialfilter1"}
                         value={"steel"}
                         displayName={"Stål"}
@@ -122,7 +122,10 @@ export default function Filter(props) {
                         value={"concrete"}
                         displayName={"Betong"}
                         checked={props.checked[10]}
-                        />
+                        /> */}
+                    <MaterialSelectionFilter
+                        checked={props.checked.slice(8)}
+                    />
                 </div>
                 <button className="filterContainer_drawerButtonApply" id="filterContainer_drawerButton" onClick={handleClick}>Apply</button>    
             </div>
