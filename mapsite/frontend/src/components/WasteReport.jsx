@@ -136,26 +136,29 @@ const WasteReport = (selectedBuilding) => {
       "recycled",
       "locationRecycle",
     ];
-    setBuildingData((prevData) => {
-      // Make a copy of the previous state
-      const newData = { ...prevData };
 
-      // Check if the category and subCategory exist, if not, create them
-      if (!newData[category]) {
-        newData[category] = {};
-      }
-      if (!newData[category][subCategory]) {
-        newData[category][subCategory] = {};
-      }
+    if (/^\d*\.?\d*$/.test(newValue)) {
+      setBuildingData((prevData) => {
+        // Make a copy of the previous state
+        const newData = { ...prevData };
 
-      // Update the specific field with the new value
-      newData[category][subCategory][wasteCategories[index]] = newValue;
+        // Check if the category and subCategory exist, if not, create them
+        if (!newData[category]) {
+          newData[category] = {};
+        }
+        if (!newData[category][subCategory]) {
+          newData[category][subCategory] = {};
+        }
 
-      console.log("The category: ", category);
-      calculateSumWasteValues(category);
+        // Update the specific field with the new value
+        newData[category][subCategory][wasteCategories[index]] = parseFloat(newValue);
 
-      return newData;
-    });
+        console.log("The category: ", category);
+        calculateSumWasteValues(category);
+
+        return newData;
+      });
+    }
 
     console.log("Updated waste: ", buildingData);
   };
@@ -316,9 +319,11 @@ const WasteReport = (selectedBuilding) => {
                 </TableCell>
               ))}
               <TableCell style={centerCellStyle}>
-                    {parseFloat(ordinaryWasteSums.totalWaste) + parseFloat(ordinaryWasteSums.totalRecycled)}
+                {parseFloat(ordinaryWasteSums.totalWaste) +
+                  parseFloat(ordinaryWasteSums.totalRecycled)}
               </TableCell>
             </TableRow>
+
 
             {/*DANGEROUS WASTE */}
             <TableRow>
@@ -351,7 +356,7 @@ const WasteReport = (selectedBuilding) => {
                           handleWasteChange(
                             "dangerousWaste",
                             name,
-                            value,
+                            index,
                             e.target.value
                           )
                         }
@@ -381,20 +386,27 @@ const WasteReport = (selectedBuilding) => {
                 </TableCell>
               ))}
               <TableCell style={centerCellStyle}>
-                    {parseFloat(dangerousWasteSums.totalWaste) + parseFloat(dangerousWasteSums.totalRecycled)}
+                {parseFloat(dangerousWasteSums.totalWaste) +
+                  parseFloat(dangerousWasteSums.totalRecycled)}
               </TableCell>
             </TableRow>
             <TableRow>
               <TableCell style={subHeaderCellStyle}>Sum avfall i alt</TableCell>
-              {[
-                "totalAmountTotal", "totalWaste", "", "totalRecycled", "",
-              ].map((value, index) => (
-                <TableCell key={index} style={cellStyle}>
-                  {value === "" ? "" : (parseFloat(ordinaryWasteSums[value]) + parseFloat(dangerousWasteSums[value]))}
-                </TableCell>
-              ))}
+              {["totalAmountTotal", "totalWaste", "", "totalRecycled", ""].map(
+                (value, index) => (
+                  <TableCell key={index} style={cellStyle}>
+                    {value === ""
+                      ? ""
+                      : parseFloat(ordinaryWasteSums[value]) +
+                        parseFloat(dangerousWasteSums[value])}
+                  </TableCell>
+                )
+              )}
               <TableCell style={centerCellStyle}>
-                {parseFloat(ordinaryWasteSums.totalWaste) + parseFloat(ordinaryWasteSums.totalRecycled) +parseFloat(dangerousWasteSums.totalWaste) + parseFloat(dangerousWasteSums.totalRecycled)}
+                {parseFloat(ordinaryWasteSums.totalWaste) +
+                  parseFloat(ordinaryWasteSums.totalRecycled) +
+                  parseFloat(dangerousWasteSums.totalWaste) +
+                  parseFloat(dangerousWasteSums.totalRecycled)}
               </TableCell>
             </TableRow>
             <TableRow>
@@ -412,6 +424,13 @@ const WasteReport = (selectedBuilding) => {
               ))}
             </TableRow>
           </TableBody>
+        </Table>
+      </TableContainer>
+      <TableContainer component={Paper} style={tableStyle}>
+        <Table>
+          <TableHead>
+            
+          </TableHead>
         </Table>
       </TableContainer>
     </div>
