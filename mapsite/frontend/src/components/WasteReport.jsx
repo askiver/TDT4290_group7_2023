@@ -426,11 +426,41 @@ const WasteReport = (selectedBuilding) => {
           </TableBody>
         </Table>
       </TableContainer>
+
+
+      {/*DECLARATION AND SIGNATURE */}
       <TableContainer component={Paper} style={tableStyle}>
         <Table>
-          <TableHead>
-            
-          </TableHead>
+            <TableHead>
+              <TableRow>
+                <TableCell style={tabletitle}>Erklæring og underskrift</TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell style={subHeaderCellStyle}>Ansvarlig søker for tiltaket</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+            <div
+                style={{ display: "flex", flexWrap: "wrap", minWidth: "200px" }}
+              >
+                {Object.entries(buildingData.declarationAndSignature).map(
+                  ([name, value], index) => (
+                    <div key={index} style={{ margin: "5px" }}>
+                      <TextField
+                        label={name}
+                        id={`declaration-and-signature-${index}`}
+                        defaultValue={value !== 0 ? value : null}
+                        size="small"
+                        variant="standard"
+                        onChange={(e) =>
+                          handlePropertyChange("declarationAndSignature", name, e.target.value)
+                        }
+                      />
+                    </div>
+                  )
+                )}
+              </div>
+            </TableBody>
         </Table>
       </TableContainer>
     </div>
