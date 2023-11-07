@@ -62,17 +62,17 @@ def register_user(request):
         """
 
         if password1 != password2:
-            print("Passwords do not match")
+            print("Passordene er ikke like")
             return Response(
                 "Passwords do not match", status=status.HTTP_400_BAD_REQUEST
             )
         if User.objects.filter(username=username).exists():
-            print("Username already exists")
+            print("Det finnes allerede en bruker med dette brukernavnet")
             return Response(
                 "Username already exists", status=status.HTTP_400_BAD_REQUEST
             )
         if User.objects.filter(email=email).exists():
-            print("Email already exists")
+            print("Det finnes allerede en bruker med denne eposten")
             return Response("Email already exists", status=status.HTTP_400_BAD_REQUEST)
         user = User.objects.create_user(
             username=username, email=email, password=password1
@@ -100,7 +100,7 @@ def sign_in(request):
         user = authenticate(request, username=username, password=password)
         if user:
             login(request, user)
-            messages.success(request, f"Hi {username.title()}, welcome back!")
+            messages.success(request, f"Hei {username.title()}, velkommen tilbake!")
             return Response(status=status.HTTP_200_OK)
 
         else:

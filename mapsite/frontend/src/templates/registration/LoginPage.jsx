@@ -48,7 +48,7 @@ function LoginPage() {
 
       setFormData({
         ...formData,
-        error: "Login failed. Please check your credentials.",
+        error: "Innlogging mislyktes. Dobbeltsjekk ditt brukernavn og passord.", //Brukernavn og passord stemmer ikke overens. Vennligst prøv igjen. -Viaplay
       });
     }
   };
