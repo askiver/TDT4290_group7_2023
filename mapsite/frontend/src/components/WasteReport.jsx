@@ -8,9 +8,10 @@ import TableRow from "@mui/material/TableRow";
 import TextField from "@mui/material/TextField";
 import Paper from "@mui/material/Paper";
 import { post } from "./AxiosModule";
+import PropTypes from "prop-types";
 
-const WasteReport = (selectedBuilding) => {
-  const buildingnr = selectedBuilding.selectedBuilding;
+const WasteReport = (props) => {
+  const buildingnr = props.selectedBuilding;
   const [loading, setLoading] = useState(true);
   const [buildingData, setBuildingData] = useState(null);
   const [ordinaryWasteSums, setOrdinaryWasteSums] = useState({
@@ -24,6 +25,20 @@ const WasteReport = (selectedBuilding) => {
     totalWaste: 0,
     totalRecycled: 0,
   });
+
+  // Saves the data 
+  const handleSave = () => {
+    if (props.onSave) {
+      props.onSave(buildingData); // Pass the buildingData to the save function
+    }
+  };
+
+  // Submits the data
+  const handleSubmit = () => {
+    if (props.onSubmit) {
+      props.onSubmit(buildingData); // Pass the buildingData to the submit function
+    }
+  }
 
   const calculateSumWasteValues = (category) => {
     let totalAmountTotal = 0;
@@ -146,7 +161,8 @@ const WasteReport = (selectedBuilding) => {
         }
 
         // Update the specific field with the new value
-        newData[category][subCategory][wasteCategories[index]] = parseFloat(newValue);
+        newData[category][subCategory][wasteCategories[index]] =
+          parseFloat(newValue);
 
         console.log("The category: ", category);
         calculateSumWasteValues(category);
@@ -319,7 +335,6 @@ const WasteReport = (selectedBuilding) => {
               </TableCell>
             </TableRow>
 
-
             {/*DANGEROUS WASTE */}
             <TableRow>
               <TableCell style={centerCellStyle}>
@@ -422,44 +437,55 @@ const WasteReport = (selectedBuilding) => {
         </Table>
       </TableContainer>
 
-
       {/*DECLARATION AND SIGNATURE */}
       <TableContainer component={Paper} style={tableStyle}>
         <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell style={tabletitle}>Erklæring og underskrift</TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell style={subHeaderCellStyle}>Ansvarlig søker for tiltaket</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
+          <TableHead>
+            <TableRow>
+              <TableCell style={tabletitle}>Erklæring og underskrift</TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell style={subHeaderCellStyle}>
+                Ansvarlig søker for tiltaket
+              </TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
             <div
-                style={{ display: "flex", flexWrap: "wrap", minWidth: "200px" }}
-              >
-                {Object.entries(buildingData.declarationAndSignature).map(
-                  ([name, value], index) => (
-                    <div key={index} style={{ margin: "5px" }}>
-                      <TextField
-                        label={name}
-                        id={`declaration-and-signature-${index}`}
-                        defaultValue={value !== 0 ? value : null}
-                        size="small"
-                        variant="standard"
-                        onChange={(e) =>
-                          handlePropertyChange("declarationAndSignature", name, e.target.value)
-                        }
-                      />
-                    </div>
-                  )
-                )}
-              </div>
-            </TableBody>
+              style={{ display: "flex", flexWrap: "wrap", minWidth: "200px" }}
+            >
+              {Object.entries(buildingData.declarationAndSignature).map(
+                ([name, value], index) => (
+                  <div key={index} style={{ margin: "5px" }}>
+                    <TextField
+                      label={name}
+                      id={`declaration-and-signature-${index}`}
+                      defaultValue={value !== 0 ? value : null}
+                      size="small"
+                      variant="standard"
+                      onChange={(e) =>
+                        handlePropertyChange(
+                          "declarationAndSignature",
+                          name,
+                          e.target.value
+                        )
+                      }
+                    />
+                  </div>
+                )
+              )}
+            </div>
+          </TableBody>
         </Table>
       </TableContainer>
     </div>
   );
+};
+
+WasteReport.propTypes = {
+  selectedBuilding: PropTypes.string.isRequired,
+  onSave: PropTypes.func.isRequired,
+  onSubmit: PropTypes.func.isRequired,
 };
 
 export default WasteReport;
@@ -499,3 +525,4 @@ const centerCellStyle = {
   textAlign: "center",
   border: "1px solid #ddd",
 };
+
