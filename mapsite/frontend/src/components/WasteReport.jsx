@@ -9,6 +9,7 @@ import TextField from "@mui/material/TextField";
 import Paper from "@mui/material/Paper";
 import { post } from "./AxiosModule";
 import PropTypes from "prop-types";
+import "./css/WasteReport.css"
 
 const WasteReport = (props) => {
   const buildingnr = props.selectedBuilding;
@@ -176,17 +177,17 @@ const WasteReport = (props) => {
 
   return (
     <div>
-      <TableContainer component={Paper} style={tableStyle}>
+      <TableContainer component={Paper} className="table-container">
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell colSpan={8} style={tabletitle}>
+              <TableCell colSpan={8} className="table-title">
                 Rapporten gjelder
               </TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            <TableCell style={subHeaderCellStyle} rowSpan={2}>
+            <TableCell className="sub-header-cell-style" rowSpan={2}>
               Eiendom/byggested
             </TableCell>
             <TableCell style={{ display: "flex", alignItems: "center" }}>
@@ -214,54 +215,54 @@ const WasteReport = (props) => {
           </TableBody>
         </Table>
       </TableContainer>
-      <TableContainer component={Paper} style={tableStyle}>
+      <TableContainer component={Paper} className="table-container">
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell style={tabletitle} colSpan={7}>
+              <TableCell className="table-title" colSpan={7}>
                 Detaljert sluttrapport med avfallsplan
               </TableCell>
             </TableRow>
             <TableRow>
-              <TableCell style={headerCellStyle}></TableCell>
-              <TableCell style={headerCellStyle}>PLAN</TableCell>
-              <TableCell style={headerCellStyle} colSpan={5}>
+              <TableCell className="header-cell-style"></TableCell>
+              <TableCell className="header-cell-style">PLAN</TableCell>
+              <TableCell className="header-cell-style" colSpan={5}>
                 SLUTTRAPPORT
               </TableCell>
             </TableRow>
             <TableRow>
-              <TableCell style={headerCellStyle}></TableCell>
-              <TableCell style={headerCellStyle}>
+              <TableCell className="header-cell-style"></TableCell>
+              <TableCell className="header-cell-style">
                 Beregnet mengde (tonn)
               </TableCell>
-              <TableCell style={headerCellStyle} colSpan={4}>
+              <TableCell className="header-cell-style" colSpan={4}>
                 Disponeringsmåte (Angi mengde og leveringssted)
               </TableCell>
-              <TableCell style={headerCellStyle}>
+              <TableCell className="header-cell-style">
                 Faktisk mengde (tonn) (2) + (4)
               </TableCell>
             </TableRow>
             <TableRow>
-              <TableCell style={centerCellStyle}></TableCell>
-              <TableCell style={centerCellStyle}>
+              <TableCell className="center-cell-style"></TableCell>
+              <TableCell className="center-cell-style">
                 Fraksjoner som skal kildesorteres
               </TableCell>
-              <TableCell style={centerCellStyle}>
+              <TableCell className="center-cell-style">
                 Mengde levert til godkjent avfallsanlegg
               </TableCell>
-              <TableCell style={centerCellStyle}>Leveringssted</TableCell>
-              <TableCell style={centerCellStyle}>
+              <TableCell className="center-cell-style">Leveringssted</TableCell>
+              <TableCell className="center-cell-style">
                 Mengde levert direkte til ombruk/gjenvinning
               </TableCell>
-              <TableCell style={centerCellStyle}>Leveringssted</TableCell>
-              <TableCell style={centerCellStyle}>
+              <TableCell className="center-cell-style">Leveringssted</TableCell>
+              <TableCell className="center-cell-style">
                 Fraksjoner som er kildesortert
               </TableCell>
             </TableRow>
             <TableRow>
-              <TableCell style={subHeaderCellStyle}></TableCell>
+              <TableCell className="sub-header-cell-style"></TableCell>
               {Array.from({ length: 6 }, (_, index) => (
-                <TableCell key={index} style={centerCellStyle}>
+                <TableCell key={index} className="center-cell-style">
                   ({index + 1})
                 </TableCell>
               ))}
@@ -269,13 +270,13 @@ const WasteReport = (props) => {
 
             {/*ORDINARY WASTE */}
             <TableRow>
-              <TableCell style={centerCellStyle}>
-                <span style={boldText}>Ordinært avfall</span>
+              <TableCell className="center-cell-style">
+                <span className="bold-text">Ordinært avfall</span>
                 <br />
                 (listen er ikke uttømmende)
               </TableCell>
               {Array.from({ length: 6 }, (_, index) => (
-                <TableCell key={index} style={centerCellStyle} />
+                <TableCell key={index} className="center-cell-style" />
               ))}
             </TableRow>
           </TableHead>
@@ -284,7 +285,7 @@ const WasteReport = (props) => {
             {Object.entries(buildingData.ordinaryWaste).map(
               ([name, values], index) => (
                 <TableRow key={index}>
-                  <TableCell style={centerCellStyle}>{name}</TableCell>
+                  <TableCell className="center-cell-style">{name}</TableCell>
                   {[
                     values.amountTotal,
                     values.waste,
@@ -292,7 +293,7 @@ const WasteReport = (props) => {
                     values.recycled,
                     "",
                   ].map((value, index) => (
-                    <TableCell style={cellStyle} key={index}>
+                    <TableCell className="cell-style" key={index}>
                       <TextField
                         defaultValue={value}
                         size="small"
@@ -308,14 +309,14 @@ const WasteReport = (props) => {
                       />
                     </TableCell>
                   ))}
-                  <TableCell style={centerCellStyle}>
+                  <TableCell className="center-cell-style">
                     {parseFloat(values.waste) + parseFloat(values.recycled)}
                   </TableCell>
                 </TableRow>
               )
             )}
             <TableRow>
-              <TableCell style={subHeaderCellStyle}>
+              <TableCell className="sub-header-cell-style">
                 Sum sortert ordinært avfall
               </TableCell>
               {[
@@ -325,11 +326,11 @@ const WasteReport = (props) => {
                 ordinaryWasteSums.totalRecycled,
                 "",
               ].map((value, index) => (
-                <TableCell style={centerCellStyle} key={index}>
+                <TableCell className="center-cell-style" key={index}>
                   {value}
                 </TableCell>
               ))}
-              <TableCell style={centerCellStyle}>
+              <TableCell className="center-cell-style">
                 {parseFloat(ordinaryWasteSums.totalWaste) +
                   parseFloat(ordinaryWasteSums.totalRecycled)}
               </TableCell>
@@ -337,19 +338,19 @@ const WasteReport = (props) => {
 
             {/*DANGEROUS WASTE */}
             <TableRow>
-              <TableCell style={centerCellStyle}>
-                <span style={boldText}>Farlig avfall</span>
+              <TableCell className="center-cell-style">
+                <span className="bold-text">Farlig avfall</span>
                 <br />
                 (listen er ikke uttømmende)
               </TableCell>
               {Array.from({ length: 6 }, (_, index) => (
-                <TableCell key={index} style={centerCellStyle} />
+                <TableCell key={index} className="center-cell-style" />
               ))}
             </TableRow>
             {Object.entries(buildingData.dangerousWaste).map(
               ([name, values], index) => (
                 <TableRow key={index}>
-                  <TableCell style={centerCellStyle}>{name}</TableCell>
+                  <TableCell className="center-cell-style">{name}</TableCell>
                   {[
                     values.amountTotal,
                     values.waste,
@@ -357,7 +358,7 @@ const WasteReport = (props) => {
                     values.recycled,
                     "",
                   ].map((value, index) => (
-                    <TableCell style={cellStyle} key={index}>
+                    <TableCell className="cell-style" key={index}>
                       <TextField
                         defaultValue={value}
                         size="small"
@@ -373,7 +374,7 @@ const WasteReport = (props) => {
                       />
                     </TableCell>
                   ))}
-                  <TableCell style={centerCellStyle}>
+                  <TableCell className="center-cell-style">
                     {parseFloat(values.waste) + parseFloat(values.recycled)}
                   </TableCell>
                 </TableRow>
@@ -381,7 +382,7 @@ const WasteReport = (props) => {
             )}
 
             <TableRow>
-              <TableCell style={subHeaderCellStyle}>
+              <TableCell className="sub-header-cell-style">
                 Sum sortert farlig avfall
               </TableCell>
               {[
@@ -391,20 +392,20 @@ const WasteReport = (props) => {
                 dangerousWasteSums.totalRecycled,
                 "",
               ].map((value, index) => (
-                <TableCell style={centerCellStyle} key={index}>
+                <TableCell className="center-cell-style" key={index}>
                   {value}
                 </TableCell>
               ))}
-              <TableCell style={centerCellStyle}>
+              <TableCell className="center-cell-style">
                 {parseFloat(dangerousWasteSums.totalWaste) +
                   parseFloat(dangerousWasteSums.totalRecycled)}
               </TableCell>
             </TableRow>
             <TableRow>
-              <TableCell style={subHeaderCellStyle}>Sum avfall i alt</TableCell>
+              <TableCell className="sub-header-cell-style">Sum avfall i alt</TableCell>
               {["totalAmountTotal", "totalWaste", "", "totalRecycled", ""].map(
                 (value, index) => (
-                  <TableCell key={index} style={cellStyle}>
+                  <TableCell key={index} className="cell-style">
                     {value === ""
                       ? ""
                       : parseFloat(ordinaryWasteSums[value]) +
@@ -412,7 +413,7 @@ const WasteReport = (props) => {
                   </TableCell>
                 )
               )}
-              <TableCell style={centerCellStyle}>
+              <TableCell className="center-cell-style">
                 {parseFloat(ordinaryWasteSums.totalWaste) +
                   parseFloat(ordinaryWasteSums.totalRecycled) +
                   parseFloat(dangerousWasteSums.totalWaste) +
@@ -420,17 +421,17 @@ const WasteReport = (props) => {
               </TableCell>
             </TableRow>
             <TableRow>
-              <TableCell style={subHeaderCellStyle}>Sorteringsgrad</TableCell>
+              <TableCell className="sub-header-cell-style">Sorteringsgrad</TableCell>
               {Array.from({ length: 6 }, (_, index) => (
-                <TableCell key={index} style={cellStyle} />
+                <TableCell key={index} className="cell-style" />
               ))}
             </TableRow>
             <TableRow>
-              <TableCell style={subHeaderCellStyle}>
+              <TableCell className="sub-header-cell-style">
                 Avfall/areal (kg/m2)
               </TableCell>
               {Array.from({ length: 6 }, (_, index) => (
-                <TableCell key={index} style={cellStyle} />
+                <TableCell key={index} className="cell-style" />
               ))}
             </TableRow>
           </TableBody>
@@ -438,14 +439,14 @@ const WasteReport = (props) => {
       </TableContainer>
 
       {/*DECLARATION AND SIGNATURE */}
-      <TableContainer component={Paper} style={tableStyle}>
+      <TableContainer component={Paper} className="table-container">
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell style={tabletitle}>Erklæring og underskrift</TableCell>
+              <TableCell className="table-title">Erklæring og underskrift</TableCell>
             </TableRow>
             <TableRow>
-              <TableCell style={subHeaderCellStyle}>
+              <TableCell className="sub-header-cell-style">
                 Ansvarlig søker for tiltaket
               </TableCell>
             </TableRow>
@@ -489,40 +490,4 @@ WasteReport.propTypes = {
 };
 
 export default WasteReport;
-
-const tableStyle = {
-  maxWidth: "90%",
-  margin: "50px",
-};
-
-const cellStyle = {
-  border: "1px solid #ddd",
-};
-
-const boldText = {
-  fontWeight: "bold",
-};
-
-const tabletitle = {
-  backgroundColor: "#d0d0d0",
-  fontWeight: "bold",
-  border: "1px solid #ddd",
-};
-
-const headerCellStyle = {
-  backgroundColor: "#f0f0f0",
-  fontWeight: "bold",
-  border: "1px solid #ddd",
-  textAlign: "center",
-};
-
-const subHeaderCellStyle = {
-  backgroundColor: "#f5f5f5",
-};
-
-const centerCellStyle = {
-  backgroundColor: "#f5f5f5",
-  textAlign: "center",
-  border: "1px solid #ddd",
-};
 
