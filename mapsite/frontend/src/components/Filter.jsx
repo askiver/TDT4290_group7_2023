@@ -50,9 +50,9 @@ export default function Filter(props) {
         {isHidden
         ? null : 
             <div className="filterContainer" id="filterContainer">
-                <h1 className="filterTitle"> Filters </h1>   
+                <h1 className="filterTitle"> Filtre </h1>   
                 <div className="filterContainer_buildingFilter">
-                    <h3 className="filterContainer_filterTypeText"> Building Filter </h3>
+                    <h3 className="filterContainer_filterTypeText"> Bygningstyper </h3>
                     <hr className="filterContainer_filterTypeDivide"/>
                     <FilterButton 
                         name={"buildingfilter1"}
@@ -103,13 +103,13 @@ export default function Filter(props) {
                         />
                 </div>
                 <div className="filterContainer_materialFilter">
-                    <h3 className="filterContainer_filterTypeText"> Material Filter </h3>
+                    <h3 className="filterContainer_filterTypeText"> Materialtyper </h3>
                     <hr className="filterContainer_filterTypeDivide"/>
                     <MaterialSelectionFilter
                         checked={props.checked.slice(8)}
                     />
                 </div>
-                <button className="filterContainer_drawerButtonApply" id="filterContainer_drawerButton" onClick={handleClick}>Apply</button>    
+                <button className="filterContainer_drawerButtonApply" id="filterContainer_drawerButton" onClick={handleClick}>Bruk filter</button>    
             </div>
         }
         {isHidden ?

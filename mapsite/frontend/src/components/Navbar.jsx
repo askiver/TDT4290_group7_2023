@@ -17,7 +17,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 const pages = ["Ny data", "Kart", "Avfallsrapporter"];
-const settings = ["Profile", "Logout"];
+const settings = ["Min profil", "Logg ut"];
 
 function Navbar() {
   const [anchorElNav, setAnchorElNav] = React.useState(null);
@@ -42,10 +42,10 @@ function Navbar() {
 
   const redirectToPage = async (page) => {
     switch (page) {
-      case "Profile":
+      case "Min profil":
         navigate("/user");
         break;
-      case "Logout":
+      case "Logg ut":
         console.log("Logging out");
         const axiosInstance = axios.create({
           baseURL: "http://127.0.0.1:8000/api/logout/",
