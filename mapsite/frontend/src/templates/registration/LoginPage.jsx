@@ -1,5 +1,5 @@
 import { useState } from "react";
-import axios from "axios";
+import { post } from "../../components/AxiosModule";
 import TextField from "@mui/material/TextField";
 import Box from "@mui/material/Box";
 import { useNavigate } from "react-router-dom";
@@ -29,13 +29,7 @@ function LoginPage() {
     const { username, password } = formData;
 
     try {
-      // Create an Axios instance with CORS support
-      const axiosInstance = axios.create({
-        baseURL: "http://127.0.0.1:8000/api/login/", // Replace with your Django API URL
-        withCredentials: true, // Send credentials (cookies) if needed
-      });
-
-      const response = await axiosInstance.post("", { username, password });
+      const response = await post("login/", { username, password });
 
       // Handle successful login
       console.log("Login successful:", response);

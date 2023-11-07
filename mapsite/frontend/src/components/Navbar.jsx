@@ -14,7 +14,7 @@ import MenuItem from "@mui/material/MenuItem";
 import AdbIcon from "@mui/icons-material/Adb";
 import trdLogo from "../assets/trd.png";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import { get } from "./AxiosModule";
 
 const pages = ["Ny data", "Kart", "Avfallsrapporter"];
 const settings = ["Profile", "Logout"];
@@ -47,11 +47,7 @@ function Navbar() {
         break;
       case "Logout":
         console.log("Logging out");
-        const axiosInstance = axios.create({
-          baseURL: "http://127.0.0.1:8000/api/logout/",
-          withCredentials: true, // Send credentials (cookies) if needed
-        });
-        await axiosInstance.get("");
+        await get("logout/");
         navigate("/");
         break;
       case "Ny data":

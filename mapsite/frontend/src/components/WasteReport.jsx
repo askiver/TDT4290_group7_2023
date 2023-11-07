@@ -7,7 +7,7 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import TextField from "@mui/material/TextField";
 import Paper from "@mui/material/Paper";
-import axios from "axios";
+import { post } from "./AxiosModule";
 
 const WasteReport = (selectedBuilding) => {
   const buildingnr = selectedBuilding.selectedBuilding;
@@ -78,12 +78,7 @@ const WasteReport = (selectedBuilding) => {
           const date = selectedBuildingData.date;
           const buildingYear = date ? parseInt(date.split("-")[0]) : 0;
 
-          const axiosInstance = axios.create({
-            baseURL: "http://127.0.0.1:8000/api/generate_waste_report/",
-            withCredentials: true, // Send credentials (cookies) if needed
-          });
-
-          const buildingResponse = await axiosInstance.post("", {
+          const buildingResponse = await post("generate_waste_report/", {
             bnr: buildingCode,
             area: area,
             stories: stories,
