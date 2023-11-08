@@ -64,12 +64,12 @@ const WasteReport = (props) => {
     console.log("Updated sums: ", ordinaryWasteSums, dangerousWasteSums);
   };
 
-  const handleSave = async (buildingData) => {
+  const handleSave = async () => {
     // TODO: Implement saving logic AND handle response
-    await post("/saveData?", buildingData);
+    await post("/saveData", buildingData);
   }
 
-  const handleSubmit = async (buildingData) => {
+  const handleSubmit = async () => {
     // TODO: Implement submit logic AND handle response
     await post("/submitData", buildingData)
   }
