@@ -124,11 +124,11 @@ export default function Map(props) {
                 attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                 url="https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png"
             />
-            {displayData.map((building) => {
+            {/* {displayData.map((building) => {
                 let pathOptions = eval(`colorPicker(building.${materialFilter})`);
                 return (
                 <Polygon fillOpacity={1} pathOptions={pathOptions} key={building.osmid} positions={building.geometry} eventHandlers={{click: () => handlePopupOpen(building)}}/>
-            )})}
+            )})} */}
             {selectedBuilding && (
             <LocationMarker
               selectedBuilding={selectedBuilding}

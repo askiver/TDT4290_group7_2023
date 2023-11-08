@@ -14,7 +14,6 @@ function MapPage() {
     false,
     false,
     false,
-    false,
     true,
     false,
     false,
