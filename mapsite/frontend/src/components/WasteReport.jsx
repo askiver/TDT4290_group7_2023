@@ -43,6 +43,10 @@ const WasteReport = (props) => {
       console.log(totalAmountTotal, totalWaste, totalRecycled);
     }
 
+    totalAmountTotal = Math.floor(totalAmountTotal * 100) / 100;
+    totalWaste = Math.floor(totalWaste * 100) / 100;
+    totalRecycled = Math.floor(totalRecycled * 100) / 100;
+
     if (category === "ordinaryWaste") {
       setOrdinaryWasteSums({
         totalAmountTotal,
@@ -309,7 +313,7 @@ const WasteReport = (props) => {
                     </TableCell>
                   ))}
                   <TableCell className="center-cell-style">
-                    {parseFloat(values.waste) + parseFloat(values.recycled)}
+                    {Math.floor((parseFloat(values.waste) + parseFloat(values.recycled))*100)/100}
                   </TableCell>
                 </TableRow>
               )
@@ -330,8 +334,8 @@ const WasteReport = (props) => {
                 </TableCell>
               ))}
               <TableCell className="center-cell-style">
-                {parseFloat(ordinaryWasteSums.totalWaste) +
-                  parseFloat(ordinaryWasteSums.totalRecycled)}
+                {Math.floor((parseFloat(ordinaryWasteSums.totalWaste) +
+                  parseFloat(ordinaryWasteSums.totalRecycled))*100)/100}
               </TableCell>
             </TableRow>
 
@@ -374,7 +378,7 @@ const WasteReport = (props) => {
                     </TableCell>
                   ))}
                   <TableCell className="center-cell-style">
-                    {parseFloat(values.waste) + parseFloat(values.recycled)}
+                    {Math.floor((parseFloat(values.waste) + parseFloat(values.recycled))*100)/100}
                   </TableCell>
                 </TableRow>
               )
