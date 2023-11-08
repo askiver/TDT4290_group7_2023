@@ -1,7 +1,9 @@
-import { MapContainer, TileLayer, Polygon, Marker, Popup, useMapEvents } from 'react-leaflet';
+import { useMap, MapContainer, TileLayer, Polygon, Marker, Popup, useMapEvents } from 'react-leaflet';
 import { useEffect, useRef, useState } from 'react';
-import * as GeoSearch from "leaflet-geosearch";
+import { GeoSearchControl, OpenStreetMapProvider } from 'leaflet-geosearch';
 import { useNavigate } from "react-router-dom";
+import '../../../node_modules/leaflet-geosearch/dist/geosearch.css';
+
 
 export default function Map(props) {
     const [data, setData] = useState([{
@@ -25,26 +27,14 @@ export default function Map(props) {
     const [displayData, setDisplayData] = useState([]);
     const [selectedBuilding, setSelectedBuilding] = useState(null);
     const [materialFilter, setMaterialFilter] = useState('wood');
-    const mapRef = useRef()
+    // const map = useMap();
 
     useEffect(() => {
-        const map = mapRef.current;
         //Redo fetch the right way
         fetch("src/assets/testmapData.json")
             .then((res) => res.json())
             .then((data) => setData(data))
             .finally(setLoading(false))
-
-
-        if (map) {
-            // Create and add the GeoSearch control
-            const searchControl = new GeoSearch.GeoSearchControl({
-                provider: new GeoSearch.OpenStreetMapProvider(),
-                style: "bar", // Customize the style here (bar or button)
-                searchLabel: "Skriv inn adresse",
-            });
-            map.addControl(searchControl);
-            }
     }, [])
 
     useEffect(() => {
@@ -113,17 +103,17 @@ export default function Map(props) {
     setSelectedBuilding(null);
     };
 
-
     return(
         <>
         {loading
         ? <h1>Loading...</h1>
         :
-          <MapContainer ref={mapRef} center={[63.430482, 10.39496]} zoom={13} scrollWheelZoom={true}>
+          <MapContainer center={[63.430482, 10.39496]} zoom={13} scrollWheelZoom={true}>
             <TileLayer
                 attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                 url="https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png"
             />
+            <SearchField/>
             {/* {displayData.map((building) => {
                 let pathOptions = eval(`colorPicker(building.${materialFilter})`);
                 return (
@@ -140,6 +130,7 @@ export default function Map(props) {
         </>
     )
 }
+
 
 function LocationMarker({ selectedBuilding, onPopupClose }) {
     const [position, setPosition] = useState(null);
@@ -174,4 +165,28 @@ function LocationMarker({ selectedBuilding, onPopupClose }) {
       {/*<Popup>You are here</Popup>*/}
     </Marker>
   );
+}
+
+const SearchField = () => {
+    const provider = new OpenStreetMapProvider({
+        params: {
+            countrycodes: 'no',
+        }
+    });
+    const map = useMap();
+
+    //@ts-ignore
+    const searchControl = new GeoSearchControl({
+        provider: provider,
+        searchLabel: "Skriv inn adresse",
+        style: 'bar',
+        autoComplete: true
+    });
+
+    useEffect(() => {
+        map.addControl(searchControl);
+        return () => map.removeControl(searchControl);
+    }, []);
+
+    return null
 }

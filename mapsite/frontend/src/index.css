@@ -15,6 +15,11 @@
 
 }
 
+input {
+  background-color: #fff;
+  color: black;
+}
+
 a {
   font-weight: 500;
   color: #646cff;

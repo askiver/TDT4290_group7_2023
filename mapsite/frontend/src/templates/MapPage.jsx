@@ -53,4 +53,4 @@ function MapPage() {
   )
 }
   
-  export default MapPage;
+export default MapPage;

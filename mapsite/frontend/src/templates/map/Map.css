@@ -1,0 +1,13 @@
+.leaflet-geosearch-bar {
+    position: relative;
+    z-index: 1050;
+    margin-top: 1rem;
+}
+
+.reset {
+    height: 1rem;
+}
+
+.glass {
+    height: 1rem;
+}
