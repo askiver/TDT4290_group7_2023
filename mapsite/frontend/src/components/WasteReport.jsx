@@ -10,6 +10,7 @@ import Paper from "@mui/material/Paper";
 import { post } from "./AxiosModule";
 import PropTypes from "prop-types";
 import "./css/WasteReport.css"
+import Button from "@mui/material/Button";
 
 const WasteReport = (props) => {
   const buildingnr = props.selectedBuilding;
@@ -26,20 +27,6 @@ const WasteReport = (props) => {
     totalWaste: 0,
     totalRecycled: 0,
   });
-
-  // Saves the data 
-  const handleSave = () => {
-    if (props.onSave) {
-      props.onSave(buildingData); // Pass the buildingData to the save function
-    }
-  };
-
-  // Submits the data
-  const handleSubmit = () => {
-    if (props.onSubmit) {
-      props.onSubmit(buildingData); // Pass the buildingData to the submit function
-    }
-  }
 
   const calculateSumWasteValues = (category) => {
     let totalAmountTotal = 0;
@@ -72,6 +59,16 @@ const WasteReport = (props) => {
 
     console.log("Updated sums: ", ordinaryWasteSums, dangerousWasteSums);
   };
+
+  const handleSave = async (buildingData) => {
+    // TODO: Implement saving logic AND handle response
+    await post("/saveData?", buildingData);
+  }
+
+  const handleSubmit = async (buildingData) => {
+    // TODO: Implement submit logic AND handle response
+    await post("/submitData", buildingData)
+  }
 
   useEffect(() => {
     fetch("../../src/assets/testmapData.json")
@@ -177,6 +174,8 @@ const WasteReport = (props) => {
 
   return (
     <div>
+      <Button variant="contained" style={saveButtonStyle} onClick={() => (handleSave())}>Lagre avfallsprognose</Button>
+      <Button variant="contained" style={submitButtonStyle} onClick={() => (handleSubmit())}>Send inn avfallsrapport</Button>
       <TableContainer component={Paper} className="table-container">
         <Table>
           <TableHead>
@@ -485,8 +484,18 @@ const WasteReport = (props) => {
 
 WasteReport.propTypes = {
   selectedBuilding: PropTypes.string.isRequired,
-  onSave: PropTypes.func.isRequired,
-  onSubmit: PropTypes.func.isRequired,
+};
+
+const saveButtonStyle = {
+  position: "absolute",
+  top: "100px", // Adjust the top position as needed
+  right: "275px", // Adjust the right position as needed
+};
+
+const submitButtonStyle = {
+  position: "absolute",
+  top: "100px",  // Adjust the top position as needed
+  right: "10px", // Adjust the right position as needed
 };
 
 export default WasteReport;
