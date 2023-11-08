@@ -85,8 +85,9 @@
     border-top: 2px solid grey;
 }
 
-.filterContainer_drawerButtonApply {
+.filterContainer_button {
     margin: 10% 0% 10% 0%;
+    width: 45%;
     border-radius: 100vh;
     z-index: 1100;
 }
@@ -94,8 +95,8 @@
 .filterContainer_drawerButtonShow {
     position: absolute;
     margin: 0px 0px 0px 1vw;
-    top: 50%;
-    left: 0;
+    top: 90%;
+    left: 2%;
     z-index: 1050;
 }
 
@@ -107,4 +108,11 @@
     display: flex;
     flex-direction: column;
     align-items: start;
+}
+
+.filterContainer_buttonContainer {
+    width: 100%;
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: space-evenly;
 }

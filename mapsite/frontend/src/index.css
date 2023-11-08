@@ -75,6 +75,7 @@ button:focus-visible {
 }
 
 .leaflet-container {
-  width: calc(100vw - 4rem); 
-  height: calc(100vh - 10rem);
+  width: calc(100vw); 
+  /* height: calc(100vh - 33px); */
+  height: calc(100vh - 64px);
 }

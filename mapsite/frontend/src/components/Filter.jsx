@@ -7,8 +7,25 @@ import "../components/Filter.css"
 export default function Filter(props) {
     const [isHidden, setIsHidden] = useState(true);
 
-    console.log("This is isHidden");
-    console.log(isHidden);
+    const defaultFilter = {
+        buildingfilter1: "",
+        buildingfilter2: "",
+        buildingfilter3: "",
+        buildingfilter4: "",
+        buildingfilter5: "",
+        buildingfilter6: "",
+        buildingfilter7: "",
+        wood: "wood",
+        paper: "",
+        glass: "",
+        metal: "",
+        plaster: "",
+        plastic: "",
+        concrete: "",
+        pConcrete: "",
+        eWaste: "",
+        surfaceTreatmentWaste: ""
+    }
 
 
     const handleClick = () => {
@@ -45,7 +62,13 @@ export default function Filter(props) {
             props.extractFilter(filter);
         }
         setIsHidden(!isHidden);
-        
+    }
+
+    const handleReset = () => {
+        if(!isHidden) {
+            props.extractFilter(defaultFilter);
+        }
+        setIsHidden(!isHidden)
     }
 
     return (
@@ -106,7 +129,10 @@ export default function Filter(props) {
                         checked={props.checked.slice(7)}
                     />
                 </div>
-                <button className="filterContainer_drawerButtonApply" id="filterContainer_drawerButton" onClick={handleClick}>Apply</button>    
+                <div className="filterContainer_buttonContainer">
+                    <button className="filterContainer_button" id="filterContainer_drawerButton" onClick={handleClick}>Apply</button>
+                    <button className="filterContainer_button" id="filterContainer_resetFilter" onClick={handleReset}>Reset Filter</button>
+                </div>
             </div>
         }
         {isHidden ?
