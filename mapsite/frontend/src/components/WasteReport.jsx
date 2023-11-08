@@ -71,7 +71,7 @@ const WasteReport = (props) => {
 
   const handleSubmit = async () => {
     // TODO: Implement submit logic AND handle response
-    await post("/submitData", buildingData)
+    await post("submit_waste_report/", buildingData)
   }
 
   useEffect(() => {
