@@ -93,15 +93,15 @@ export default function Map(props) {
 
     const colorPicker = (value) => {
         if(value < 20) {
-            return { color: "#ADD8E6" }
+            return { color: "#ADD8E6", fillColor: "#ADD8E6" }
         } else if(value < 40) {
-            return { color:"#89CFF0"}
+            return { color:"#89CFF0",  fillColor: "#89CFF0" }
         } else if(value < 60) {
-            return { color:"#123499"}
+            return { color:"#123499",  fillColor: "#123499" }
         } else if(value < 80) {
-            return { color:"#0A2472"}
+            return { color:"#0A2472",  fillColor: "#0A2472" }
         } else {
-            return { color:"#051650"}
+            return { color:"#051650",  fillColor: "#051650" }
         }
     }
 
@@ -125,8 +125,9 @@ export default function Map(props) {
                 url="https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png"
             />
             {displayData.map((building) => {
+                let pathOptions = eval(`colorPicker(building.${materialFilter})`);
                 return (
-                <Polygon key={building.osmid} pathOptions={eval(`colorPicker(building.${materialFilter})`)} positions={building.geometry} eventHandlers={{click: () => handlePopupOpen(building)}}/>
+                <Polygon fillOpacity={1} pathOptions={pathOptions} key={building.osmid} positions={building.geometry} eventHandlers={{click: () => handlePopupOpen(building)}}/>
             )})}
             {selectedBuilding && (
             <LocationMarker
