@@ -114,15 +114,16 @@ export default function Map(props) {
                 url="https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png"
             />
             <SearchField/>
-            {/* {displayData.map((building) => {
+            {displayData.map((building) => {
                 let pathOptions = eval(`colorPicker(building.${materialFilter})`);
                 return (
                 <Polygon fillOpacity={1} pathOptions={pathOptions} key={building.osmid} positions={building.geometry} eventHandlers={{click: () => handlePopupOpen(building)}}/>
-            )})} */}
+            )})}
             {selectedBuilding && (
             <LocationMarker
               selectedBuilding={selectedBuilding}
               onPopupClose={handlePopupClose}
+              selectedMaterial={materialFilter}
             />
           )}
           {console.log("Selected building: ", selectedBuilding)}
@@ -132,7 +133,7 @@ export default function Map(props) {
 }
 
 
-function LocationMarker({ selectedBuilding, onPopupClose }) {
+function LocationMarker({ selectedBuilding, onPopupClose, selectedMaterial }) {
     const [position, setPosition] = useState(null);
     const map = useMapEvents({
         click(e) {
@@ -157,6 +158,20 @@ function LocationMarker({ selectedBuilding, onPopupClose }) {
           <h3>Bygningsinformasjon</h3>
           <p>OSM ID: {selectedBuilding.osmid}</p>
           <p>Bygningsnummer: {selectedBuilding.buildingnr}</p>
+          <br/>
+          <h3 className='wastePopUpText_title'>Avfall</h3>
+          <hr />
+          <p className='wastePopUpText'>Trevirke: {selectedBuilding.wood.toFixed(3)} kg/m2</p>
+          <p className='wastePopUpText'>Papir, papp og kartong: {selectedBuilding.paper.toFixed(3)} kg/m2</p>
+          <p className='wastePopUpText'>Glass: {selectedBuilding.glass.toFixed(3)} kg/m2</p>
+          <p className='wastePopUpText'>Jern og andre metaller: {selectedBuilding.metal.toFixed(3)} kg/m2</p>
+          <p className='wastePopUpText'>Gipsbaserte materialer: {selectedBuilding.plaster.toFixed(3)} kg/m2</p>
+          <p className='wastePopUpText'>Plast: {selectedBuilding.plastic.toFixed(3)} kg/m2</p>
+          <p className='wastePopUpText'>Betong: {selectedBuilding.concrete.toFixed(3)} kg/m2</p>
+          <p className='wastePopUpText'>Forurenset Betong: {selectedBuilding.pConcrete.toFixed(3)} kg/m2</p>
+          <p className='wastePopUpText'>EE-avfall: {selectedBuilding.eWaste.toFixed(3)} kg/m2</p>
+          <p className='wastePopUpText'>Overflatebehandlingsavfall: {selectedBuilding.surfaceTreatmentWaste.toFixed(3)} kg/m2</p>
+
           <button onClick={() => navigate(`/report/${selectedBuilding.buildingnr}`)}>
             Se avfallsprognose
           </button>
