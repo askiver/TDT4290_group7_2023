@@ -130,8 +130,12 @@ def prepare_data_prediction(data):
 def prepare_data_waste_report(data_list):
     dfs = [pd.json_normalize(data) for data in data_list]
 
+    pd.set_option('display.max_columns', None)
+    print(dfs[-2:])
+
     # Concatenate all dataframes together
     df = pd.concat(dfs, ignore_index=True)
+    print(df.tail())
     # Rename columns for consistency
     df.columns = (df.columns.str.replace('property.', '', regex=False)
                   .str.replace('.', '_', regex=False))
@@ -158,6 +162,10 @@ def train_waste_report(data):
 
     reg = xgb.XGBRegressor()
 
+    # Show all columns
+    pd.set_option('display.max_columns', None)
+    #print(X.tail())
+    #print(targets.tail())
     reg.fit(X, targets)
 
     reg.save_model('common/util/model.json')

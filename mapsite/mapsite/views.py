@@ -119,15 +119,24 @@ def send_json(request):
 @api_view(["POST", "GET"])
 def submit_waste_report(request):
     if request.method == "POST":
+        #print(request.POST)
         # Decode JSON data from the request body
         request_data = json.loads(request.body.decode("utf-8"))
+        print(request_data)
+        # Save as json file
+        with open('test_waste_report.json', 'w') as outfile:
+            json.dump(request_data, outfile, indent=4)
+
         # Save report to database
-        waste_report = WasteReport(report=request_data)
-        waste_report.save()
+        #waste_report = WasteReport(report=request_data)
+        #waste_report.save()
 
         # Since a new report has been saved, we should train the model again
         # First retrieve all reports from the database
-        reports = list(WasteReport.objects.all())
+        waste_reports = list(WasteReport.objects.all())
+        reports = []
+        for waste_report in waste_reports:
+            reports.append(waste_report.report)
         # Train the model
         train_waste_report(reports)
         # Predict material usage for all buildings
@@ -176,7 +185,7 @@ def generate_waste_report(request):
         waste_type = col.split('_')[0]
         material_type = col.split('_')[1]
         waste_or_recycled = col.split('_')[2]
-        generated_waste_report[waste_type][material_type][waste_or_recycled] = material_value
+        generated_waste_report[waste_type][material_type][waste_or_recycled]['amount'] = material_value
         # Also add to the total amount of materials
         generated_waste_report[waste_type][material_type]['amountTotal'] += material_value
     # Send waste report back to frontend

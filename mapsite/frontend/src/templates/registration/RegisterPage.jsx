@@ -1,5 +1,5 @@
 import { useState } from "react";
-import axios from "axios";
+import { post } from "../../components/AxiosModule";
 import TextField from "@mui/material/TextField";
 import Box from "@mui/material/Box";
 import { useNavigate } from "react-router-dom";
@@ -31,14 +31,8 @@ function RegisterPage() {
     const { username, password1, password2, email } = formData;
 
     try {
-      // Create an Axios instance with CORS support
-      const axiosInstance = axios.create({
-        baseURL: "http://127.0.0.1:8000/api/register/",
-        withCredentials: true, // Send credentials (cookies) if needed
-      });
-
       // TODO: REGISTRATION LOGIC
-      const response = await axiosInstance.post("", { username, password1, password2, email });
+      const response = await post("register/", { username, password1, password2, email });
 
       // Handle successful registration
       console.log("Registration successful:", response);

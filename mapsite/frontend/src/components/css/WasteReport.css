@@ -1,0 +1,37 @@
+/* CSS for the Waste Report*/
+
+.table-container {
+  max-width: 90%;
+  margin: 50px;
+}
+
+.cell-style {
+  border: 1px solid #ddd;
+}
+
+.bold-text {
+  font-weight: bold;
+}
+
+.table-title {
+  background-color: #d0d0d0;
+  font-weight: bold;
+  border: 1px solid #ddd;
+}
+
+.header-cell-style {
+  background-color: #f0f0f0;
+  font-weight: bold;
+  border: 1px solid #ddd;
+  text-align: center;
+}
+
+.sub-header-cell-style {
+  background-color: #f5f5f5;
+}
+
+.center-cell-style {
+  background-color: #f5f5f5;
+  text-align: center;
+  border: 1px solid #ddd;
+}

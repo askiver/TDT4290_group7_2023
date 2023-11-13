@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
@@ -7,10 +7,13 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import TextField from "@mui/material/TextField";
 import Paper from "@mui/material/Paper";
-import axios from "axios";
+import { post } from "./AxiosModule";
+import PropTypes from "prop-types";
+import "./css/WasteReport.css";
+import Button from "@mui/material/Button";
 
-const WasteReport = (selectedBuilding) => {
-  const buildingnr = selectedBuilding.selectedBuilding;
+const WasteReport = (props) => {
+  const buildingnr = props.selectedBuilding;
   const [loading, setLoading] = useState(true);
   const [buildingData, setBuildingData] = useState(null);
   const [ordinaryWasteSums, setOrdinaryWasteSums] = useState({
@@ -34,11 +37,19 @@ const WasteReport = (selectedBuilding) => {
 
     for (const field of Object.values(buildingData[category])) {
       console.log("Category calculating: ", field);
+          // Access the 'waste' and 'recycled' properties within the 'field' object
+      const waste = field.waste || { amount: 0 }; // Default to 0 if 'waste' is undefined
+      const recycled = field.recycled || { amount: 0 }; // Default to 0 if 'recycled' is undefined
+
       totalAmountTotal += field.amountTotal || 0;
-      totalWaste += field.waste || 0;
-      totalRecycled += field.recycled || 0;
+      totalWaste += waste.amount || 0;
+      totalRecycled += recycled.amount || 0;
       console.log(totalAmountTotal, totalWaste, totalRecycled);
     }
+
+    totalAmountTotal = Math.floor(totalAmountTotal * 100) / 100;
+    totalWaste = Math.floor(totalWaste * 100) / 100;
+    totalRecycled = Math.floor(totalRecycled * 100) / 100;
 
     if (category === "ordinaryWaste") {
       setOrdinaryWasteSums({
@@ -55,6 +66,16 @@ const WasteReport = (selectedBuilding) => {
     }
 
     console.log("Updated sums: ", ordinaryWasteSums, dangerousWasteSums);
+  };
+
+  const handleSave = async () => {
+    // TODO: Implement saving logic AND handle response
+    await post("/saveData", buildingData);
+  };
+
+  const handleSubmit = async () => {
+    // TODO: Implement submit logic AND handle response
+    await post("submit_waste_report/", buildingData);
   };
 
   useEffect(() => {
@@ -78,12 +99,7 @@ const WasteReport = (selectedBuilding) => {
           const date = selectedBuildingData.date;
           const buildingYear = date ? parseInt(date.split("-")[0]) : 0;
 
-          const axiosInstance = axios.create({
-            baseURL: "http://127.0.0.1:8000/api/generate_waste_report/",
-            withCredentials: true, // Send credentials (cookies) if needed
-          });
-
-          const buildingResponse = await axiosInstance.post("", {
+          const buildingResponse = await post("generate_waste_report/", {
             bnr: buildingCode,
             area: area,
             stories: stories,
@@ -128,51 +144,79 @@ const WasteReport = (selectedBuilding) => {
     console.log("Updated building data: ", buildingData);
   };
 
-  const handleWasteChange = (category, subCategory, index, newValue) => {
-    const wasteCategories = [
-      "amountTotal",
-      "waste",
-      "locationWaste",
-      "recycled",
-      "locationRecycle",
-    ];
+  const handleWasteChange = (wasteType, materialType, field, newValue) => {
+    if (/^\d*\.?\d*$/.test(newValue)) {
+        setBuildingData((prevData) => {
+          const newData = { ...prevData };
+        
+          // Update the specific field with the new value
+          newData[wasteType][materialType][field]["amount"] = parseFloat(newValue);
+    
+          console.log("The category: ", wasteType);
+          calculateSumWasteValues(wasteType);
+    
+          return newData;
+        });
+
+      }
+
+    };
+
+  const handleLocationChange = (wasteType, materialType, field, newValue) => {
     setBuildingData((prevData) => {
-      // Make a copy of the previous state
       const newData = { ...prevData };
 
-      // Check if the category and subCategory exist, if not, create them
-      if (!newData[category]) {
-        newData[category] = {};
-      }
-      if (!newData[category][subCategory]) {
-        newData[category][subCategory] = {};
-      }
-
       // Update the specific field with the new value
-      newData[category][subCategory][wasteCategories[index]] = newValue;
+      newData[wasteType][materialType][field]["location"] = newValue;
 
-      console.log("The category: ", category);
-      calculateSumWasteValues(category);
+      console.log("The category: ", wasteType);
+      calculateSumWasteValues(wasteType);
 
       return newData;
     });
+  }
 
-    console.log("Updated waste: ", buildingData);
-  };
+  const handleTotalWasteChange = (wasteType, materialType, newValue) => {
+    setBuildingData((prevData) => {
+      const newData = { ...prevData };
+
+      // Update the specific field with the new value
+      newData[wasteType][materialType]["amountTotal"] = parseFloat(newValue);
+
+      console.log("The category: ", wasteType);
+      calculateSumWasteValues(wasteType);
+
+      return newData;
+    });
+  }
 
   return (
     <div>
-      <TableContainer component={Paper} style={tableStyle}>
+      <Button
+        variant="contained"
+        style={saveButtonStyle}
+        onClick={() => handleSave()}
+      >
+        Lagre avfallsprognose
+      </Button>
+      <Button
+        variant="contained"
+        style={submitButtonStyle}
+        onClick={() => handleSubmit()}
+      >
+        Send inn avfallsrapport
+      </Button>
+      <TableContainer component={Paper} className="table-container">
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell colSpan={8} style={tabletitle}>
+              <TableCell colSpan={8} className="table-title">
                 Rapporten gjelder
               </TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            <TableCell style={subHeaderCellStyle} rowSpan={2}>
+            <TableCell className="sub-header-cell-style" rowSpan={2}>
               Eiendom/byggested
             </TableCell>
             <TableCell style={{ display: "flex", alignItems: "center" }}>
@@ -200,54 +244,54 @@ const WasteReport = (selectedBuilding) => {
           </TableBody>
         </Table>
       </TableContainer>
-      <TableContainer component={Paper} style={tableStyle}>
+      <TableContainer component={Paper} className="table-container">
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell style={tabletitle} colSpan={7}>
+              <TableCell className="table-title" colSpan={7}>
                 Detaljert sluttrapport med avfallsplan
               </TableCell>
             </TableRow>
             <TableRow>
-              <TableCell style={headerCellStyle}></TableCell>
-              <TableCell style={headerCellStyle}>PLAN</TableCell>
-              <TableCell style={headerCellStyle} colSpan={5}>
+              <TableCell className="header-cell-style"></TableCell>
+              <TableCell className="header-cell-style">PLAN</TableCell>
+              <TableCell className="header-cell-style" colSpan={5}>
                 SLUTTRAPPORT
               </TableCell>
             </TableRow>
             <TableRow>
-              <TableCell style={headerCellStyle}></TableCell>
-              <TableCell style={headerCellStyle}>
+              <TableCell className="header-cell-style"></TableCell>
+              <TableCell className="header-cell-style">
                 Beregnet mengde (tonn)
               </TableCell>
-              <TableCell style={headerCellStyle} colSpan={4}>
+              <TableCell className="header-cell-style" colSpan={4}>
                 Disponeringsmåte (Angi mengde og leveringssted)
               </TableCell>
-              <TableCell style={headerCellStyle}>
+              <TableCell className="header-cell-style">
                 Faktisk mengde (tonn) (2) + (4)
               </TableCell>
             </TableRow>
             <TableRow>
-              <TableCell style={centerCellStyle}></TableCell>
-              <TableCell style={centerCellStyle}>
+              <TableCell className="center-cell-style"></TableCell>
+              <TableCell className="center-cell-style">
                 Fraksjoner som skal kildesorteres
               </TableCell>
-              <TableCell style={centerCellStyle}>
+              <TableCell className="center-cell-style">
                 Mengde levert til godkjent avfallsanlegg
               </TableCell>
-              <TableCell style={centerCellStyle}>Leveringssted</TableCell>
-              <TableCell style={centerCellStyle}>
+              <TableCell className="center-cell-style">Leveringssted</TableCell>
+              <TableCell className="center-cell-style">
                 Mengde levert direkte til ombruk/gjenvinning
               </TableCell>
-              <TableCell style={centerCellStyle}>Leveringssted</TableCell>
-              <TableCell style={centerCellStyle}>
+              <TableCell className="center-cell-style">Leveringssted</TableCell>
+              <TableCell className="center-cell-style">
                 Fraksjoner som er kildesortert
               </TableCell>
             </TableRow>
             <TableRow>
-              <TableCell style={subHeaderCellStyle}></TableCell>
+              <TableCell className="sub-header-cell-style"></TableCell>
               {Array.from({ length: 6 }, (_, index) => (
-                <TableCell key={index} style={centerCellStyle}>
+                <TableCell key={index} className="center-cell-style">
                   ({index + 1})
                 </TableCell>
               ))}
@@ -255,13 +299,13 @@ const WasteReport = (selectedBuilding) => {
 
             {/*ORDINARY WASTE */}
             <TableRow>
-              <TableCell style={centerCellStyle}>
-                <span style={boldText}>Ordinært avfall</span>
+              <TableCell className="center-cell-style">
+                <span className="bold-text">Ordinært avfall</span>
                 <br />
                 (listen er ikke uttømmende)
               </TableCell>
               {Array.from({ length: 6 }, (_, index) => (
-                <TableCell key={index} style={centerCellStyle} />
+                <TableCell key={index} className="center-cell-style" />
               ))}
             </TableRow>
           </TableHead>
@@ -270,38 +314,71 @@ const WasteReport = (selectedBuilding) => {
             {Object.entries(buildingData.ordinaryWaste).map(
               ([name, values], index) => (
                 <TableRow key={index}>
-                  <TableCell style={centerCellStyle}>{name}</TableCell>
-                  {[
-                    values.amountTotal,
-                    values.waste,
-                    "",
-                    values.recycled,
-                    "",
-                  ].map((value, index) => (
-                    <TableCell style={cellStyle} key={index}>
-                      <TextField
-                        defaultValue={value}
-                        size="small"
-                        variant="standard"
-                        onChange={(e) =>
-                          handleWasteChange(
-                            "ordinaryWaste",
-                            name,
-                            index,
-                            e.target.value
-                          )
-                        }
-                      />
-                    </TableCell>
+                  <TableCell className="center-cell-style">{name}</TableCell>
+                  <TableCell className="cell-style">
+                    <TextField
+                              defaultValue={values.amountTotal}
+                              size="small"
+                              variant="standard"
+                              onChange={(e) =>
+                                handleTotalWasteChange(
+                                  "ordinaryWaste",
+                                  name,
+                                  e.target.value
+                                )
+                              }
+                            />
+                  </TableCell>
+                  {Object.entries(values).map(([subname, subvalues], index) => (
+                    <React.Fragment key={index}>
+                      {subname != "amountTotal" && (
+                        <>
+                          <TableCell className="cell-style">
+                            <TextField
+                              defaultValue={subvalues.amount}
+                              size="small"
+                              variant="standard"
+                              onChange={(e) =>
+                                handleWasteChange(
+                                  "ordinaryWaste",
+                                  name,
+                                  subname,
+                                  e.target.value
+                                )
+                              }
+                            />
+                          </TableCell>
+                          <TableCell className="cell-style">
+                            {values.location}
+                            <TextField
+                              defaultValue={subvalues.location}
+                              size="small"
+                              variant="standard"
+                              onChange={(e) =>
+                                handleLocationChange(
+                                  "ordinaryWaste",
+                                  name,
+                                  subname,
+                                  e.target.value
+                                )
+                              }
+                            />
+                          </TableCell>
+                        </>
+                      )}
+                    </React.Fragment>
                   ))}
-                  <TableCell style={centerCellStyle}>
-                    {parseFloat(values.waste) + parseFloat(values.recycled)}
+                  <TableCell className="center-cell-style">
+                    {Math.floor(
+                      (parseFloat(values.waste.amount) + parseFloat(values.recycled.amount)) *
+                        100
+                    ) / 100}
                   </TableCell>
                 </TableRow>
               )
             )}
             <TableRow>
-              <TableCell style={subHeaderCellStyle}>
+              <TableCell className="sub-header-cell-style">
                 Sum sortert ordinært avfall
               </TableCell>
               {[
@@ -311,62 +388,99 @@ const WasteReport = (selectedBuilding) => {
                 ordinaryWasteSums.totalRecycled,
                 "",
               ].map((value, index) => (
-                <TableCell style={centerCellStyle} key={index}>
+                <TableCell className="center-cell-style" key={index}>
                   {value}
                 </TableCell>
               ))}
-              <TableCell style={centerCellStyle}>
-                    {parseFloat(ordinaryWasteSums.totalWaste) + parseFloat(ordinaryWasteSums.totalRecycled)}
+              <TableCell className="center-cell-style">
+                {Math.floor(
+                  (parseFloat(ordinaryWasteSums.totalWaste) +
+                    parseFloat(ordinaryWasteSums.totalRecycled)) *
+                    100
+                ) / 100}
               </TableCell>
             </TableRow>
 
             {/*DANGEROUS WASTE */}
             <TableRow>
-              <TableCell style={centerCellStyle}>
-                <span style={boldText}>Farlig avfall</span>
+              <TableCell className="center-cell-style">
+                <span className="bold-text">Farlig avfall</span>
                 <br />
                 (listen er ikke uttømmende)
               </TableCell>
               {Array.from({ length: 6 }, (_, index) => (
-                <TableCell key={index} style={centerCellStyle} />
+                <TableCell key={index} className="center-cell-style" />
               ))}
             </TableRow>
             {Object.entries(buildingData.dangerousWaste).map(
               ([name, values], index) => (
                 <TableRow key={index}>
-                  <TableCell style={centerCellStyle}>{name}</TableCell>
-                  {[
-                    values.amountTotal,
-                    values.waste,
-                    "",
-                    values.recycled,
-                    "",
-                  ].map((value, index) => (
-                    <TableCell style={cellStyle} key={index}>
-                      <TextField
-                        defaultValue={value}
-                        size="small"
-                        variant="standard"
-                        onChange={(e) =>
-                          handleWasteChange(
-                            "dangerousWaste",
-                            name,
-                            value,
-                            e.target.value
-                          )
-                        }
-                      />
-                    </TableCell>
+                  <TableCell className="center-cell-style">{name}</TableCell>
+                  <TableCell className="cell-style">
+                    <TextField
+                              defaultValue={values.amountTotal}
+                              size="small"
+                              variant="standard"
+                              onChange={(e) =>
+                                handleTotalWasteChange(
+                                  "dangerousWaste",
+                                  name,
+                                  e.target.value
+                                )
+                              }
+                            />
+                  </TableCell>
+                  {Object.entries(values).map(([subname, subvalues], index) => (
+                    <React.Fragment key={index}>
+                      {subname != "amountTotal" && (
+                        <>
+                          <TableCell className="cell-style">
+                            <TextField
+                              defaultValue={subvalues.amount}
+                              size="small"
+                              variant="standard"
+                              onChange={(e) =>
+                                handleWasteChange(
+                                  "dangerousWaste",
+                                  name,
+                                  subname,
+                                  e.target.value
+                                )
+                              }
+                            />
+                          </TableCell>
+                          <TableCell className="cell-style">
+                            {values.location}
+                            <TextField
+                              defaultValue={subvalues.location}
+                              size="small"
+                              variant="standard"
+                              onChange={(e) =>
+                                handleLocationChange(
+                                  "dangerousWaste",
+                                  name,
+                                  subname,
+                                  e.target.value
+                                )
+                              }
+                            />
+                          </TableCell>
+                        </>
+                      )}
+                    </React.Fragment>
                   ))}
-                  <TableCell style={centerCellStyle}>
-                    {parseFloat(values.waste) + parseFloat(values.recycled)}
+                  <TableCell className="center-cell-style">
+                    {Math.floor(
+                      (parseFloat(values.waste.amount) + parseFloat(values.recycled.amount)) *
+                        100
+                    ) / 100}
                   </TableCell>
                 </TableRow>
               )
             )}
 
             <TableRow>
-              <TableCell style={subHeaderCellStyle}>
+              <TableCell className="sub-header-cell-style">
                 Sum sortert farlig avfall
               </TableCell>
               {[
@@ -376,41 +490,96 @@ const WasteReport = (selectedBuilding) => {
                 dangerousWasteSums.totalRecycled,
                 "",
               ].map((value, index) => (
-                <TableCell style={centerCellStyle} key={index}>
+                <TableCell className="center-cell-style" key={index}>
                   {value}
                 </TableCell>
               ))}
-              <TableCell style={centerCellStyle}>
-                    {parseFloat(dangerousWasteSums.totalWaste) + parseFloat(dangerousWasteSums.totalRecycled)}
+              <TableCell className="center-cell-style">
+                {parseFloat(dangerousWasteSums.totalWaste) +
+                  parseFloat(dangerousWasteSums.totalRecycled)}
               </TableCell>
             </TableRow>
             <TableRow>
-              <TableCell style={subHeaderCellStyle}>Sum avfall i alt</TableCell>
-              {[
-                "totalAmountTotal", "totalWaste", "", "totalRecycled", "",
-              ].map((value, index) => (
-                <TableCell key={index} style={cellStyle}>
-                  {value === "" ? "" : (parseFloat(ordinaryWasteSums[value]) + parseFloat(dangerousWasteSums[value]))}
-                </TableCell>
-              ))}
-              <TableCell style={centerCellStyle}>
-                {parseFloat(ordinaryWasteSums.totalWaste) + parseFloat(ordinaryWasteSums.totalRecycled) +parseFloat(dangerousWasteSums.totalWaste) + parseFloat(dangerousWasteSums.totalRecycled)}
+              <TableCell className="sub-header-cell-style">
+                Sum avfall i alt
+              </TableCell>
+              {["totalAmountTotal", "totalWaste", "", "totalRecycled", ""].map(
+                (value, index) => (
+                  <TableCell key={index} className="cell-style">
+                    {value === ""
+                      ? ""
+                      : parseFloat(ordinaryWasteSums[value]) +
+                        parseFloat(dangerousWasteSums[value])}
+                  </TableCell>
+                )
+              )}
+              <TableCell className="center-cell-style">
+                {parseFloat(ordinaryWasteSums.totalWaste) +
+                  parseFloat(ordinaryWasteSums.totalRecycled) +
+                  parseFloat(dangerousWasteSums.totalWaste) +
+                  parseFloat(dangerousWasteSums.totalRecycled)}
               </TableCell>
             </TableRow>
             <TableRow>
-              <TableCell style={subHeaderCellStyle}>Sorteringsgrad</TableCell>
+              <TableCell className="sub-header-cell-style">
+                Sorteringsgrad
+              </TableCell>
               {Array.from({ length: 6 }, (_, index) => (
-                <TableCell key={index} style={cellStyle} />
+                <TableCell key={index} className="cell-style" />
               ))}
             </TableRow>
             <TableRow>
-              <TableCell style={subHeaderCellStyle}>
+              <TableCell className="sub-header-cell-style">
                 Avfall/areal (kg/m2)
               </TableCell>
               {Array.from({ length: 6 }, (_, index) => (
-                <TableCell key={index} style={cellStyle} />
+                <TableCell key={index} className="cell-style" />
               ))}
             </TableRow>
+          </TableBody>
+        </Table>
+      </TableContainer>
+
+      {/*DECLARATION AND SIGNATURE */}
+      <TableContainer component={Paper} className="table-container">
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell className="table-title">
+                Erklæring og underskrift
+              </TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell className="sub-header-cell-style">
+                Ansvarlig søker for tiltaket
+              </TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            <div
+              style={{ display: "flex", flexWrap: "wrap", minWidth: "200px" }}
+            >
+              {Object.entries(buildingData.declarationAndSignature).map(
+                ([name, value], index) => (
+                  <div key={index} style={{ margin: "5px" }}>
+                    <TextField
+                      label={name}
+                      id={`declaration-and-signature-${index}`}
+                      defaultValue={value !== 0 ? value : null}
+                      size="small"
+                      variant="standard"
+                      onChange={(e) =>
+                        handlePropertyChange(
+                          "declarationAndSignature",
+                          name,
+                          e.target.value
+                        )
+                      }
+                    />
+                  </div>
+                )
+              )}
+            </div>
           </TableBody>
         </Table>
       </TableContainer>
@@ -418,40 +587,20 @@ const WasteReport = (selectedBuilding) => {
   );
 };
 
+WasteReport.propTypes = {
+  selectedBuilding: PropTypes.string.isRequired,
+};
+
+const saveButtonStyle = {
+  position: "absolute",
+  top: "100px", // Adjust the top position as needed
+  right: "275px", // Adjust the right position as needed
+};
+
+const submitButtonStyle = {
+  position: "absolute",
+  top: "100px", // Adjust the top position as needed
+  right: "10px", // Adjust the right position as needed
+};
+
 export default WasteReport;
-
-const tableStyle = {
-  maxWidth: "90%",
-  margin: "50px",
-};
-
-const cellStyle = {
-  border: "1px solid #ddd",
-};
-
-const boldText = {
-  fontWeight: "bold",
-};
-
-const tabletitle = {
-  backgroundColor: "#d0d0d0",
-  fontWeight: "bold",
-  border: "1px solid #ddd",
-};
-
-const headerCellStyle = {
-  backgroundColor: "#f0f0f0",
-  fontWeight: "bold",
-  border: "1px solid #ddd",
-  textAlign: "center",
-};
-
-const subHeaderCellStyle = {
-  backgroundColor: "#f5f5f5",
-};
-
-const centerCellStyle = {
-  backgroundColor: "#f5f5f5",
-  textAlign: "center",
-  border: "1px solid #ddd",
-};
