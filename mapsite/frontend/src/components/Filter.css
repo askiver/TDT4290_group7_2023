@@ -1,4 +1,13 @@
 
+@keyframes filterAnimateIn {
+    0% {
+        left: -100%;
+    }
+    100% {
+        left: 0;
+    }
+}
+
 .filterContainer {
     display: flex;
     flex-direction: column;
@@ -11,8 +20,15 @@
     height: calc(100% - 5vh);
     left: 0;
     top: 0;
-    transition: 100ms;
     z-index: 1050;
+    animation: filterAnimateIn 0.2s ease-in-out;
+    box-shadow:
+    0 2.8px 2.2px rgba(0, 0, 0, 0.034),
+    0 6.7px 5.3px rgba(0, 0, 0, 0.048),
+    0 12.5px 10px rgba(0, 0, 0, 0.06),
+    0 22.3px 17.9px rgba(0, 0, 0, 0.072),
+    0 41.8px 33.4px rgba(0, 0, 0, 0.086),
+    0 100px 80px rgba(0, 0, 0, 0.12);
 }
 
 
@@ -21,6 +37,7 @@
     flex-direction: column;
     align-items: flex-start;
     overflow-x: hidden;
+    margin-bottom: 2rem;
 }
 
 .filterContainer_materialFilter {
@@ -33,7 +50,7 @@
 .filterTitle {
     font-size: 2rem;
     font-weight: 200;
-    margin-bottom: 0;
+    margin-bottom: 0.5rem;
 }
 
 .filterButton_container {
@@ -68,8 +85,9 @@
     border-top: 2px solid grey;
 }
 
-.filterContainer_drawerButtonApply {
+.filterContainer_button {
     margin: 10% 0% 10% 0%;
+    width: 45%;
     border-radius: 100vh;
     z-index: 1100;
 }
@@ -77,8 +95,8 @@
 .filterContainer_drawerButtonShow {
     position: absolute;
     margin: 0px 0px 0px 1vw;
-    top: 50%;
-    left: 0;
+    top: 90%;
+    left: 2%;
     z-index: 1050;
 }
 
@@ -90,4 +108,11 @@
     display: flex;
     flex-direction: column;
     align-items: start;
+}
+
+.filterContainer_buttonContainer {
+    width: 100%;
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: space-evenly;
 }

@@ -1,7 +1,9 @@
-import { MapContainer, TileLayer, Polygon, Marker, Popup, useMapEvents } from 'react-leaflet';
+import { useMap, MapContainer, TileLayer, Polygon, Marker, Popup, useMapEvents } from 'react-leaflet';
 import { useEffect, useRef, useState } from 'react';
-import * as GeoSearch from "leaflet-geosearch";
+import { GeoSearchControl, OpenStreetMapProvider } from 'leaflet-geosearch';
 import { useNavigate } from "react-router-dom";
+import '../../../node_modules/leaflet-geosearch/dist/geosearch.css';
+
 
 export default function Map(props) {
     const [data, setData] = useState([{
@@ -25,26 +27,14 @@ export default function Map(props) {
     const [displayData, setDisplayData] = useState([]);
     const [selectedBuilding, setSelectedBuilding] = useState(null);
     const [materialFilter, setMaterialFilter] = useState('wood');
-    const mapRef = useRef()
+    // const map = useMap();
 
     useEffect(() => {
-        const map = mapRef.current;
         //Redo fetch the right way
         fetch("src/assets/testmapData.json")
             .then((res) => res.json())
             .then((data) => setData(data))
             .finally(setLoading(false))
-
-
-        if (map) {
-            // Create and add the GeoSearch control
-            const searchControl = new GeoSearch.GeoSearchControl({
-                provider: new GeoSearch.OpenStreetMapProvider(),
-                style: "bar", // Customize the style here (bar or button)
-                searchLabel: "Skriv inn adresse",
-            });
-            map.addControl(searchControl);
-            }
     }, [])
 
     useEffect(() => {
@@ -93,15 +83,15 @@ export default function Map(props) {
 
     const colorPicker = (value) => {
         if(value < 20) {
-            return { color: "#ADD8E6" }
+            return { color: "#ADD8E6", fillColor: "#ADD8E6" }
         } else if(value < 40) {
-            return { color:"#89CFF0"}
+            return { color:"#89CFF0",  fillColor: "#89CFF0" }
         } else if(value < 60) {
-            return { color:"#123499"}
+            return { color:"#123499",  fillColor: "#123499" }
         } else if(value < 80) {
-            return { color:"#0A2472"}
+            return { color:"#0A2472",  fillColor: "#0A2472" }
         } else {
-            return { color:"#051650"}
+            return { color:"#051650",  fillColor: "#051650" }
         }
     }
 
@@ -113,25 +103,27 @@ export default function Map(props) {
     setSelectedBuilding(null);
     };
 
-
     return(
         <>
         {loading
         ? <h1>Loading...</h1>
         :
-          <MapContainer ref={mapRef} center={[63.430482, 10.39496]} zoom={13} scrollWheelZoom={true}>
+          <MapContainer center={[63.430482, 10.39496]} zoom={13} scrollWheelZoom={true}>
             <TileLayer
                 attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                 url="https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png"
             />
+            <SearchField/>
             {displayData.map((building) => {
+                let pathOptions = eval(`colorPicker(building.${materialFilter})`);
                 return (
-                <Polygon key={building.osmid} pathOptions={eval(`colorPicker(building.${materialFilter})`)} positions={building.geometry} eventHandlers={{click: () => handlePopupOpen(building)}}/>
+                <Polygon fillOpacity={1} pathOptions={pathOptions} key={building.osmid} positions={building.geometry} eventHandlers={{click: () => handlePopupOpen(building)}}/>
             )})}
             {selectedBuilding && (
             <LocationMarker
               selectedBuilding={selectedBuilding}
               onPopupClose={handlePopupClose}
+              selectedMaterial={materialFilter}
             />
           )}
           {console.log("Selected building: ", selectedBuilding)}
@@ -140,7 +132,8 @@ export default function Map(props) {
     )
 }
 
-function LocationMarker({ selectedBuilding, onPopupClose }) {
+
+function LocationMarker({ selectedBuilding, onPopupClose, selectedMaterial }) {
     const [position, setPosition] = useState(null);
     const map = useMapEvents({
         click(e) {
@@ -165,6 +158,20 @@ function LocationMarker({ selectedBuilding, onPopupClose }) {
           <h3>Bygningsinformasjon</h3>
           <p>OSM ID: {selectedBuilding.osmid}</p>
           <p>Bygningsnummer: {selectedBuilding.buildingnr}</p>
+          <br/>
+          <h3 className='wastePopUpText_title'>Avfall</h3>
+          <hr />
+          <p className='wastePopUpText'>Trevirke: {selectedBuilding.wood.toFixed(3)} kg/m2</p>
+          <p className='wastePopUpText'>Papir, papp og kartong: {selectedBuilding.paper.toFixed(3)} kg/m2</p>
+          <p className='wastePopUpText'>Glass: {selectedBuilding.glass.toFixed(3)} kg/m2</p>
+          <p className='wastePopUpText'>Jern og andre metaller: {selectedBuilding.metal.toFixed(3)} kg/m2</p>
+          <p className='wastePopUpText'>Gipsbaserte materialer: {selectedBuilding.plaster.toFixed(3)} kg/m2</p>
+          <p className='wastePopUpText'>Plast: {selectedBuilding.plastic.toFixed(3)} kg/m2</p>
+          <p className='wastePopUpText'>Betong: {selectedBuilding.concrete.toFixed(3)} kg/m2</p>
+          <p className='wastePopUpText'>Forurenset Betong: {selectedBuilding.pConcrete.toFixed(3)} kg/m2</p>
+          <p className='wastePopUpText'>EE-avfall: {selectedBuilding.eWaste.toFixed(3)} kg/m2</p>
+          <p className='wastePopUpText'>Overflatebehandlingsavfall: {selectedBuilding.surfaceTreatmentWaste.toFixed(3)} kg/m2</p>
+
           <button onClick={() => navigate(`/report/${selectedBuilding.buildingnr}`)}>
             Se avfallsprognose
           </button>
@@ -173,4 +180,28 @@ function LocationMarker({ selectedBuilding, onPopupClose }) {
       {/*<Popup>You are here</Popup>*/}
     </Marker>
   );
+}
+
+const SearchField = () => {
+    const provider = new OpenStreetMapProvider({
+        params: {
+            countrycodes: 'no',
+        }
+    });
+    const map = useMap();
+
+    //@ts-ignore
+    const searchControl = new GeoSearchControl({
+        provider: provider,
+        searchLabel: "Skriv inn adresse",
+        style: 'bar',
+        autoComplete: true
+    });
+
+    useEffect(() => {
+        map.addControl(searchControl);
+        return () => map.removeControl(searchControl);
+    }, []);
+
+    return null
 }

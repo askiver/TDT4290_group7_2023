@@ -14,7 +14,6 @@ function MapPage() {
     false,
     false,
     false,
-    false,
     true,
     false,
     false,
@@ -54,4 +53,4 @@ function MapPage() {
   )
 }
   
-  export default MapPage;
+export default MapPage;
