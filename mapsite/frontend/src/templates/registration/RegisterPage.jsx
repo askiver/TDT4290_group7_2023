@@ -51,7 +51,7 @@ function RegisterPage() {
 
       setFormData({
         ...formData,
-        error: "Registration failed. Please check your credentials.",
+        error: "Registreringen mislyktes. Prøv igjen senere.",
       });
     }
   };
@@ -84,7 +84,7 @@ function RegisterPage() {
           <div>
             <TextField
               id="email-input"
-              label="Email-addresse"
+              label="Epost-adresse"
               type="email"
               name="email"
               value={email}
