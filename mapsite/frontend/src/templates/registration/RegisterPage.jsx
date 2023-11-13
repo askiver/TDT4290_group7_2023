@@ -84,7 +84,7 @@ function RegisterPage() {
           <div>
             <TextField
               id="email-input"
-              label="Epost-addresse"
+              label="Epost-adresse"
               type="email"
               name="email"
               value={email}
