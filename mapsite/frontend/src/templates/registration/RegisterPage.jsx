@@ -61,6 +61,7 @@ function RegisterPage() {
           backgroundColor: "white",
           p: "1rem",
           "& .MuiTextField-root": { m: 1, width: "25ch" },
+          margin: "0 auto",
         }}
       >
         <h2>Registrer ny bruker</h2>
