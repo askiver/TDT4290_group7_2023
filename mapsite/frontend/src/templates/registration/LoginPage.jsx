@@ -4,7 +4,7 @@ import TextField from "@mui/material/TextField";
 import Box from "@mui/material/Box";
 import { useNavigate } from "react-router-dom";
 
-function LoginPage() {
+export default function LoginPage() {
   const [formData, setFormData] = useState({
     username: "",
     password: "",
@@ -97,5 +97,3 @@ function LoginPage() {
     </div>
   );
 }
-
-export default LoginPage;

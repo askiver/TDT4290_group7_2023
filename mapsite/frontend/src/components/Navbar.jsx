@@ -16,12 +16,14 @@ import trdLogo from "../assets/trd.png";
 import { useNavigate } from "react-router-dom";
 import { get } from "./AxiosModule";
 
-const pages = ["Ny data", "Kart", "Avfallsrapporter"];
-const settings = ["Min profil", "Logg ut"];
-
-function Navbar() {
+// This component return a navigation bar.
+export default function Navbar() {
   const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
+  
+  // These two variables decide which tabs will be displayed.
+  const pages = ["Ny data", "Kart", "Avfallsrapporter"];
+  const settings = ["Min profil", "Logg ut"];
 
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);
@@ -79,14 +81,14 @@ function Navbar() {
           <Typography
             variant="h6"
             noWrap
-            // component="a"
-            // href="#app-bar-with-responsive-menu"
+            onClick={() => navigate("/")}
             sx={{
               mr: 2,
               display: { xs: "none", md: "flex" },
               fontWeight: 700,
               letterSpacing: ".3rem",
-              color: "black"
+              color: "black",
+              cursor: "pointer",
             }}
           >
             MATERIALBEHOLDNING I BYGG
@@ -176,4 +178,3 @@ function Navbar() {
     </AppBar>
   );
 }
-export default Navbar;

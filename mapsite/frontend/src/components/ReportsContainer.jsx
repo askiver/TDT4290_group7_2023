@@ -1,24 +1,32 @@
-import { List, ListItem, ListItemText } from "@mui/material"
+import { List, ListItem, ListItemText } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import PropTypes from "prop-types";
 
+/**
+ * This component displays the list of reports in a readable manner, 
+ * and should allow the user to view the report by clicking on the list item.
+ */
 export default function ReportsContainer({ listOfReports }) {
+  const navigate = useNavigate();
 
-  const navigate = useNavigate()
+  console.log("List of reports: ", listOfReports);
+  console.log("First report: ", listOfReports[0]);
+  console.log("First report name: ", listOfReports[0].name);
 
-  console.log("List of reports: ", listOfReports)
-  console.log("First report: ", listOfReports[0])
-  console.log("First report name: ", listOfReports[0].name)
-
-  return(
-      <List sx={style} aria-label="saved reports">
-      {listOfReports.map( (report, index) => (
-        <ListItem button key={index} style={listItemStyle} onClick={() => (navigate("/report/" + report.id))}>
+  return (
+    <List sx={style} aria-label="saved reports">
+      {listOfReports.map((report, index) => (
+        <ListItem
+          button
+          key={index}
+          style={listItemStyle}
+          onClick={() => navigate("/report/" + report.id)}
+        >
           <ListItemText primary={report.name} />
         </ListItem>
       ))}
-      </List>   
-  )
+    </List>
+  );
 }
 
 // TO BE CHANGED WHEN ACTUAL DATA FORMAT IS GIVEN
@@ -33,10 +41,10 @@ ReportsContainer.propTypes = {
 };
 
 const style = {
-  width: '100%',
-  bgcolor: 'background.paper',
+  width: "100%",
+  bgcolor: "background.paper",
 };
 
 const listItemStyle = {
-  border: '1px solid grey'
-}
+  border: "1px solid grey",
+};

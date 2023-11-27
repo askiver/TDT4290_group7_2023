@@ -1,4 +1,8 @@
-import axios from 'axios';
+import axios from "axios";
+
+/*
+ * This component produces base requests for POST and GET functions using axios.
+ */
 
 const axiosInstance = axios.create({
   baseURL: "http://127.0.0.1:8000/api/",
