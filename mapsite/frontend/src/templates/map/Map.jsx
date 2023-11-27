@@ -1,9 +1,8 @@
 import { useMap, MapContainer, TileLayer, Polygon, Marker, Popup, useMapEvents } from 'react-leaflet';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { GeoSearchControl, OpenStreetMapProvider } from 'leaflet-geosearch';
 import { useNavigate } from "react-router-dom";
 import '../../../node_modules/leaflet-geosearch/dist/geosearch.css';
-
 
 export default function Map(props) {
     const [data, setData] = useState([{
@@ -29,18 +28,21 @@ export default function Map(props) {
     const [materialFilter, setMaterialFilter] = useState('wood');
     // const map = useMap();
 
+    //fetches the data for loading the map
     useEffect(() => {
-        //Redo fetch the right way
         fetch("src/assets/testmapData.json")
             .then((res) => res.json())
             .then((data) => setData(data))
             .finally(setLoading(false))
     }, [])
 
+    //Reads in the filter, and updates the current filter state
     useEffect(() => {
         setFilter(props.filter);
     }, [props.filter]);
 
+
+    //refactors the map-data based on the current filter state
     useEffect(() => {
         let newDisplayData = [];
         let noFilter = true;
@@ -81,6 +83,7 @@ export default function Map(props) {
         setDisplayData(newDisplayData);
     }, [filter, data]);
 
+    //Gives color to the polygons on the map
     const colorPicker = (value) => {
         if(value < 20) {
             return { color: "#ADD8E6", fillColor: "#ADD8E6" }
@@ -95,10 +98,12 @@ export default function Map(props) {
         }
     }
 
+    //Updates the selected building when a building is pressed
     const handlePopupOpen = (building) => {
         setSelectedBuilding(building);
       };
     
+    //Updates the selected building when a building is pressed
     const handlePopupClose = () => {
     setSelectedBuilding(null);
     };
@@ -133,6 +138,7 @@ export default function Map(props) {
 }
 
 
+//LocationMarker component which is used to give information about the selected building
 function LocationMarker({ selectedBuilding, onPopupClose, selectedMaterial }) {
     const [position, setPosition] = useState(null);
     const map = useMapEvents({
@@ -182,6 +188,7 @@ function LocationMarker({ selectedBuilding, onPopupClose, selectedMaterial }) {
   );
 }
 
+//Search field component
 const SearchField = () => {
     const provider = new OpenStreetMapProvider({
         params: {
