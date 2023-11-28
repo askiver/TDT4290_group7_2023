@@ -36,4 +36,4 @@ This Django project is designed to display the predicted material density of bui
 ## License
 
 License
-This project is licensed under the GNU General Public License v3.0 - see the [LICENSE](LICENSE.md) file for details. The GPLv3 is a public license that allows this software to be freely used, modified, and distributed. For more information about this license, visit [GNU's GPL-3.0 page](https://www.gnu.org/licenses/gpl-3.0.en.html).
+This project is licensed under the GNU General Public License v3.0 - see the [LICENSE](LICENSE) file for details. The GPLv3 is a public license that allows this software to be freely used, modified, and distributed. For more information about this license, visit [GNU's GPL-3.0 page](https://www.gnu.org/licenses/gpl-3.0.en.html).
