@@ -1,101 +1,101 @@
 {
     "property": {
         "snr": 0,
-        "bnr": 0,
-        "area": 0,
+        "bnr": "321",
+        "area": 3068,
         "county": "",
         "address": "",
         "festenr": 0,
-        "stories": 0,
+        "stories": 1,
         "sectionnr": 0,
         "buildingnr": 0,
         "postalArea": "",
         "postalCode": 0,
-        "building_year": 0,
+        "building_year": 2008,
         "residentialnr": 0
     },
     "ordinaryWaste": {
         "wood": {
-            "amountTotal": 0,
+            "amountTotal": 13.17,
             "waste": {
-                "amount": 0,
+                "amount": 1.32,
                 "location": ""
             },
             "recycled": {
-                "amount": 0,
+                "amount": 11.85,
                 "location": ""
             }
         },
         "paper": {
-            "amountTotal": 0,
+            "amountTotal": 1.06,
             "waste": {
-                "amount": 0,
+                "amount": 0.35,
                 "location": ""
             },
             "recycled": {
-                "amount": 0,
+                "amount": 0.71,
                 "location": ""
             }
         },
         "glass": {
-            "amountTotal": 0,
+            "amountTotal": 2.6399999999999997,
             "waste": {
-                "amount": 0,
+                "amount": 1.4,
                 "location": ""
             },
             "recycled": {
-                "amount": 0,
+                "amount": 1.24,
                 "location": ""
             }
         },
         "metal": {
-            "amountTotal": 0,
+            "amountTotal": 14.42,
             "waste": {
-                "amount": 0,
+                "amount": 1.31,
                 "location": ""
             },
             "recycled": {
-                "amount": 0,
+                "amount": 13.11,
                 "location": ""
             }
         },
         "plaster": {
-            "amountTotal": 0,
+            "amountTotal": 7.71,
             "waste": {
-                "amount": 0,
+                "amount": 6.2,
                 "location": ""
             },
             "recycled": {
-                "amount": 0,
+                "amount": 1.51,
                 "location": ""
             }
         },
         "plastic": {
-            "amountTotal": 0,
+            "amountTotal": 4.2,
             "waste": {
-                "amount": 0,
+                "amount": 0.33,
                 "location": ""
             },
             "recycled": {
-                "amount": 0,
+                "amount": 3.87,
                 "location": ""
             }
         },
         "concrete": {
-            "amountTotal": 0,
+            "amountTotal": 1560.9699999999998,
             "waste": {
-                "amount": 0,
+                "amount": 1248.84,
                 "location": ""
             },
             "recycled": {
-                "amount": 0,
+                "amount": 312.13,
                 "location": ""
             }
         },
         "pConcrete": {
-            "amountTotal": 0,
+            "amountTotal": 183.92,
             "waste": {
-                "amount": 0,
+                "amount": 183.92,
                 "location": ""
             },
             "recycled": {
@@ -104,22 +104,22 @@
             }
         },
         "eWaste": {
-            "amountTotal": 0,
+            "amountTotal": 1.7,
             "waste": {
-                "amount": 0,
+                "amount": 1.52,
                 "location": ""
             },
             "recycled": {
-                "amount": 0,
+                "amount": 0.18,
                 "location": ""
             }
         }
     },
     "dangerousWaste": {
         "surfaceTreatmentWaste": {
-            "amountTotal": 0,
+            "amountTotal": 15.86,
             "waste": {
-                "amount": 0,
+                "amount": 15.86,
                 "location": ""
             },
             "recycled": {

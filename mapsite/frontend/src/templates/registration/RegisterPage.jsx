@@ -4,7 +4,11 @@ import TextField from "@mui/material/TextField";
 import Box from "@mui/material/Box";
 import { useNavigate } from "react-router-dom";
 
-function RegisterPage() {
+/**
+ * This template displays the registration page.
+ * @returns 
+ */
+export default function RegisterPage() {
   const [formData, setFormData] = useState({
     username: "",
     password1: "",
@@ -31,16 +35,12 @@ function RegisterPage() {
     const { username, password1, password2, email } = formData;
 
     try {
-      // TODO: REGISTRATION LOGIC
       const response = await post("register/", { username, password1, password2, email });
 
       // Handle successful registration
       console.log("Registration successful:", response);
-
-      // Navigate to the "/map" route
       navigate("/map");
     } catch (error) {
-      // Handle login error
       console.error("Registration failed:", error);
 
       setFormData({
@@ -121,5 +121,3 @@ function RegisterPage() {
     </div>
   );
 }
-
-export default RegisterPage;

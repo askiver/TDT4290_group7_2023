@@ -12,6 +12,7 @@ import PropTypes from "prop-types";
 import "./css/WasteReport.css";
 import Button from "@mui/material/Button";
 
+// This component displays the given data in the format of a waste report.
 const WasteReport = (props) => {
   const buildingnr = props.selectedBuilding;
   const [loading, setLoading] = useState(true);
@@ -28,6 +29,7 @@ const WasteReport = (props) => {
     totalRecycled: 0,
   });
 
+  // This function calculates and sets the sum values for either ordinary or dangerous waste.
   const calculateSumWasteValues = (category) => {
     let totalAmountTotal = 0;
     let totalWaste = 0;
@@ -37,7 +39,7 @@ const WasteReport = (props) => {
 
     for (const field of Object.values(buildingData[category])) {
       console.log("Category calculating: ", field);
-          // Access the 'waste' and 'recycled' properties within the 'field' object
+      // Access the 'waste' and 'recycled' properties within the 'field' object
       const waste = field.waste || { amount: 0 }; // Default to 0 if 'waste' is undefined
       const recycled = field.recycled || { amount: 0 }; // Default to 0 if 'recycled' is undefined
 
@@ -68,13 +70,13 @@ const WasteReport = (props) => {
     console.log("Updated sums: ", ordinaryWasteSums, dangerousWasteSums);
   };
 
+  // Sends a post request to the server, requesting the waste report to be saved.
   const handleSave = async () => {
-    // TODO: Implement saving logic AND handle response
     await post("/saveData", buildingData);
   };
 
+  // Sends a post request to the server, requresting the waste report to be submitted.
   const handleSubmit = async () => {
-    // TODO: Implement submit logic AND handle response
     await post("submit_waste_report/", buildingData);
   };
 
@@ -108,7 +110,6 @@ const WasteReport = (props) => {
 
           setBuildingData(buildingResponse.data);
           console.log("Avfallsprognose: ", buildingResponse.data);
-          console.log("Property: ", buildingResponse.data.property);
         }
       });
   }, [buildingnr]);
@@ -146,21 +147,20 @@ const WasteReport = (props) => {
 
   const handleWasteChange = (wasteType, materialType, field, newValue) => {
     if (/^\d*\.?\d*$/.test(newValue)) {
-        setBuildingData((prevData) => {
-          const newData = { ...prevData };
-        
-          // Update the specific field with the new value
-          newData[wasteType][materialType][field]["amount"] = parseFloat(newValue);
-    
-          console.log("The category: ", wasteType);
-          calculateSumWasteValues(wasteType);
-    
-          return newData;
-        });
+      setBuildingData((prevData) => {
+        const newData = { ...prevData };
 
-      }
+        // Update the specific field with the new value
+        newData[wasteType][materialType][field]["amount"] =
+          parseFloat(newValue);
 
-    };
+        console.log("The category: ", wasteType);
+        calculateSumWasteValues(wasteType);
+
+        return newData;
+      });
+    }
+  };
 
   const handleLocationChange = (wasteType, materialType, field, newValue) => {
     setBuildingData((prevData) => {
@@ -174,7 +174,7 @@ const WasteReport = (props) => {
 
       return newData;
     });
-  }
+  };
 
   const handleTotalWasteChange = (wasteType, materialType, newValue) => {
     setBuildingData((prevData) => {
@@ -188,24 +188,28 @@ const WasteReport = (props) => {
 
       return newData;
     });
-  }
+  };
 
   return (
     <div>
       <Button
+        className="submit-button-style"
         variant="contained"
-        style={saveButtonStyle}
-        onClick={() => handleSave()}
-      >
-        Lagre avfallsprognose
-      </Button>
-      <Button
-        variant="contained"
-        style={submitButtonStyle}
+        //style={submitButtonStyle}
         onClick={() => handleSubmit()}
       >
         Send inn avfallsrapport
       </Button>
+      <Button
+        className="save-button-style"
+        variant="contained"
+        //style={saveButtonStyle}
+        onClick={() => handleSave()}
+      >
+        Lagre avfallsprognose
+      </Button>
+
+      {/* INFORMATION TABLE */}
       <TableContainer component={Paper} className="table-container">
         <Table>
           <TableHead>
@@ -244,6 +248,8 @@ const WasteReport = (props) => {
           </TableBody>
         </Table>
       </TableContainer>
+
+      {/* WASTE REPORT */}
       <TableContainer component={Paper} className="table-container">
         <Table>
           <TableHead>
@@ -310,24 +316,23 @@ const WasteReport = (props) => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {/*TODO: If we add locations to the information, this needs to be considered. */}
             {Object.entries(buildingData.ordinaryWaste).map(
               ([name, values], index) => (
                 <TableRow key={index}>
                   <TableCell className="center-cell-style">{name}</TableCell>
                   <TableCell className="cell-style">
                     <TextField
-                              defaultValue={values.amountTotal}
-                              size="small"
-                              variant="standard"
-                              onChange={(e) =>
-                                handleTotalWasteChange(
-                                  "ordinaryWaste",
-                                  name,
-                                  e.target.value
-                                )
-                              }
-                            />
+                      defaultValue={values.amountTotal.toFixed(2)}
+                      size="small"
+                      variant="standard"
+                      onChange={(e) =>
+                        handleTotalWasteChange(
+                          "ordinaryWaste",
+                          name,
+                          e.target.value
+                        )
+                      }
+                    />
                   </TableCell>
                   {Object.entries(values).map(([subname, subvalues], index) => (
                     <React.Fragment key={index}>
@@ -335,7 +340,7 @@ const WasteReport = (props) => {
                         <>
                           <TableCell className="cell-style">
                             <TextField
-                              defaultValue={subvalues.amount}
+                              defaultValue={subvalues.amount.toFixed(2)}
                               size="small"
                               variant="standard"
                               onChange={(e) =>
@@ -369,10 +374,10 @@ const WasteReport = (props) => {
                     </React.Fragment>
                   ))}
                   <TableCell className="center-cell-style">
-                    {Math.floor(
-                      (parseFloat(values.waste.amount) + parseFloat(values.recycled.amount)) *
-                        100
-                    ) / 100}
+                    {
+                      (parseFloat(values.waste.amount) +
+                        parseFloat(values.recycled.amount)).toFixed(2)
+                    }
                   </TableCell>
                 </TableRow>
               )
@@ -393,11 +398,9 @@ const WasteReport = (props) => {
                 </TableCell>
               ))}
               <TableCell className="center-cell-style">
-                {Math.floor(
+                {
                   (parseFloat(ordinaryWasteSums.totalWaste) +
-                    parseFloat(ordinaryWasteSums.totalRecycled)) *
-                    100
-                ) / 100}
+                    parseFloat(ordinaryWasteSums.totalRecycled)).toFixed(2)}
               </TableCell>
             </TableRow>
 
@@ -418,17 +421,17 @@ const WasteReport = (props) => {
                   <TableCell className="center-cell-style">{name}</TableCell>
                   <TableCell className="cell-style">
                     <TextField
-                              defaultValue={values.amountTotal}
-                              size="small"
-                              variant="standard"
-                              onChange={(e) =>
-                                handleTotalWasteChange(
-                                  "dangerousWaste",
-                                  name,
-                                  e.target.value
-                                )
-                              }
-                            />
+                      defaultValue={values.amountTotal.toFixed(2)}
+                      size="small"
+                      variant="standard"
+                      onChange={(e) =>
+                        handleTotalWasteChange(
+                          "dangerousWaste",
+                          name,
+                          e.target.value
+                        )
+                      }
+                    />
                   </TableCell>
                   {Object.entries(values).map(([subname, subvalues], index) => (
                     <React.Fragment key={index}>
@@ -436,7 +439,7 @@ const WasteReport = (props) => {
                         <>
                           <TableCell className="cell-style">
                             <TextField
-                              defaultValue={subvalues.amount}
+                              defaultValue={subvalues.amount.toFixed(2)}
                               size="small"
                               variant="standard"
                               onChange={(e) =>
@@ -470,10 +473,9 @@ const WasteReport = (props) => {
                     </React.Fragment>
                   ))}
                   <TableCell className="center-cell-style">
-                    {Math.floor(
-                      (parseFloat(values.waste.amount) + parseFloat(values.recycled.amount)) *
-                        100
-                    ) / 100}
+                    {
+                      (parseFloat(values.waste.amount) +
+                        parseFloat(values.recycled.amount)).toFixed(2)}
                   </TableCell>
                 </TableRow>
               )
@@ -495,8 +497,8 @@ const WasteReport = (props) => {
                 </TableCell>
               ))}
               <TableCell className="center-cell-style">
-                {parseFloat(dangerousWasteSums.totalWaste) +
-                  parseFloat(dangerousWasteSums.totalRecycled)}
+                {(parseFloat(dangerousWasteSums.totalWaste) +
+                  parseFloat(dangerousWasteSums.totalRecycled)).toFixed(2)}
               </TableCell>
             </TableRow>
             <TableRow>
@@ -508,16 +510,16 @@ const WasteReport = (props) => {
                   <TableCell key={index} className="cell-style">
                     {value === ""
                       ? ""
-                      : parseFloat(ordinaryWasteSums[value]) +
-                        parseFloat(dangerousWasteSums[value])}
+                      : (parseFloat(ordinaryWasteSums[value]) +
+                        parseFloat(dangerousWasteSums[value])).toFixed(2)}
                   </TableCell>
                 )
               )}
               <TableCell className="center-cell-style">
-                {parseFloat(ordinaryWasteSums.totalWaste) +
+                {(parseFloat(ordinaryWasteSums.totalWaste) +
                   parseFloat(ordinaryWasteSums.totalRecycled) +
                   parseFloat(dangerousWasteSums.totalWaste) +
-                  parseFloat(dangerousWasteSums.totalRecycled)}
+                  parseFloat(dangerousWasteSums.totalRecycled)).toFixed(2)}
               </TableCell>
             </TableRow>
             <TableRow>
@@ -591,16 +593,5 @@ WasteReport.propTypes = {
   selectedBuilding: PropTypes.string.isRequired,
 };
 
-const saveButtonStyle = {
-  position: "absolute",
-  top: "100px", // Adjust the top position as needed
-  right: "275px", // Adjust the right position as needed
-};
-
-const submitButtonStyle = {
-  position: "absolute",
-  top: "100px", // Adjust the top position as needed
-  right: "10px", // Adjust the right position as needed
-};
 
 export default WasteReport;

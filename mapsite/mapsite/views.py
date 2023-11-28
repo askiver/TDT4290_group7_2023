@@ -1,13 +1,8 @@
 import json
-import pandas as pd
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.http import HttpResponse, JsonResponse
-from django.contrib.auth.forms import UserCreationForm
-from django.shortcuts import redirect
-from django.urls import reverse_lazy
-from django.views import generic
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
@@ -20,11 +15,7 @@ from common.util.utility_functions import (
 from mapsite.models import WasteReport
 
 
-def index(request):
-    print("testing")
-    return HttpResponse("Current logged in user is " + request.user.username + ".")
-
-
+# Function to verify if user is logged in
 @api_view(["GET"])
 def check_login(request):
     if request.method == "GET":
@@ -37,7 +28,6 @@ def check_login(request):
 @api_view(["POST"])
 def register_user(request):
     if request.method == "POST":
-        # print(request.body)
         # Decode JSON data from the request body
         request_data = json.loads(request.body.decode("utf-8"))
 
@@ -45,22 +35,8 @@ def register_user(request):
         password1 = request_data.get("password1")
         password2 = request_data.get("password2")
         email = request_data.get("email")
-        # form = UserCreationForm(request.POST)
 
-        """
-        # Get all usernames
-        usernames = User.objects.values_list('username', flat=True)
-        # Get all emails
-        emails = User.objects.values_list('email', flat=True)
-        print(usernames)
-        print(emails)
-        if form.is_valid():
-            print('utrolig')
-            form.save()
-            return Response('Registration successful', status=status.HTTP_201_CREATED)
-
-        """
-
+        # Some manual checks to make sure the user is valid
         if password1 != password2:
             print("Passordene er ikke like")
             return Response(
@@ -77,10 +53,12 @@ def register_user(request):
         user = User.objects.create_user(
             username=username, email=email, password=password1
         )
+        # Add user to database
         user.save()
         return Response("Registration successful", status=status.HTTP_201_CREATED)
 
 
+# Function to log out user
 @api_view(["GET"])
 def sign_out(request):
     if request.method == "GET":
@@ -88,6 +66,7 @@ def sign_out(request):
         return Response(status=status.HTTP_200_OK)
 
 
+# Function to log in user
 @api_view(["POST"])
 def sign_in(request):
     print("test")
@@ -108,69 +87,42 @@ def sign_in(request):
             return Response(status=status.HTTP_401_UNAUTHORIZED)
 
 
-@api_view(["GET"])
-def send_json(request):
-    if request.method == "GET":
-        f = open("geoJSON/finalJson.json")
-        data = json.load(f)
-        return JsonResponse(data, status=status.HTTP_200_OK)
-
-
 @api_view(["POST", "GET"])
 def submit_waste_report(request):
     if request.method == "POST":
-        #print(request.POST)
         # Decode JSON data from the request body
         request_data = json.loads(request.body.decode("utf-8"))
-        print(request_data)
         # Save as json file
-        with open('test_waste_report.json', 'w') as outfile:
+        with open('common/util/waste_report_template.json', 'w') as outfile:
             json.dump(request_data, outfile, indent=4)
 
         # Save report to database
-        #waste_report = WasteReport(report=request_data)
-        #waste_report.save()
+        # waste_report = WasteReport(report=request_data)
+        # waste_report.save()
 
         # Since a new report has been saved, we should train the model again
         # First retrieve all reports from the database
         waste_reports = list(WasteReport.objects.all())
         reports = []
+        # Transform reports to a list of dictionaries
         for waste_report in waste_reports:
             reports.append(waste_report.report)
         # Train the model
         train_waste_report(reports)
         # Predict material usage for all buildings
-        # predictions = predict_waste_report()
-        # Save predictions to mapdata file
-        save_predicted_material_usage()
-
-    if request.method == "GET":
-        # Since a new report has been saved, we should train the model again
-        # First retrieve all reports from the database
-        waste_reports = list(WasteReport.objects.all())
-        # Print a report
-        # Create a list of all reports
-        reports = []
-        for waste_report in waste_reports:
-            reports.append(waste_report.report)
-
-        # Train the model
-        train_waste_report(reports)
-        # Predict material usage for all buildings
-        # predictions = predict_waste_report()
         # Save predictions to mapdata file
         save_predicted_material_usage()
     return Response(status=status.HTTP_200_OK)
 
-
+# Method for creating and sending a waste report draft to the frontend
 @api_view(["POST"])
 def generate_waste_report(request):
     # Get features from request body
     request_data = json.loads(request.body.decode("utf-8"))
+    # Get predictions for the building
     material_df = predict_waste_report([request_data])
     # Load Json file of waste report template
     generated_waste_report = json.load(open("common/util/waste_report_template.json"))
-    pd.set_option('display.max_columns', None)
     # Add request data to waste report
     generated_waste_report['property']['bnr'] = request_data['bnr']
     generated_waste_report['property']['area'] = request_data['area']
@@ -182,6 +134,8 @@ def generate_waste_report(request):
         material_value = material_df[col].values[0]
         # Round to 2 decimals
         material_value = round(material_value, 2)
+        # Get types of data from splitting column name
+        # This enables easy addition of new material types in the future
         waste_type = col.split('_')[0]
         material_type = col.split('_')[1]
         waste_or_recycled = col.split('_')[2]
@@ -197,17 +151,7 @@ def generate_waste_report(request):
     )
     return response
 
-
-@api_view(["GET"])
-def test_file_save(request):
-    # save_predicted_material_usage("cool")
-    # Get a waste report
-    waste_report = WasteReport.objects.all()[0]
-    # Print report
-    print(waste_report.report[0])
-    return Response(status=status.HTTP_200_OK)
-
-
+# This function was used to save locally generated waste reports to the database
 @api_view(["GET"])
 def generated_waste_reports_to_DB(request):
     for i in range(1, 736):
